@@ -1,4 +1,5 @@
 {
+  "mdExtension": "mdx",
   "publicMediaPath": "outstatic/",
   "repoMediaPath": "public/outstatic/"
 }

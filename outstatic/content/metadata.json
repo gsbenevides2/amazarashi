@@ -1,0 +1,22 @@
+{
+  "commit": "",
+  "generated": "2026-02-22T22:37:53.989Z",
+  "metadata": [
+    {
+      "__outstatic": {
+        "commit": "",
+        "hash": "2996939636",
+        "path": "outstatic/content/landing-pages/home.mdx"
+      },
+      "author": {
+        "name": "Guilherme da Silva Benevides",
+        "picture": "https://avatars.githubusercontent.com/u/45762112?v=4"
+      },
+      "collection": "landing-pages",
+      "publishedAt": "2026-02-22T22:18:53.666Z",
+      "slug": "home",
+      "status": "draft",
+      "title": "Home"
+    }
+  ]
+}
