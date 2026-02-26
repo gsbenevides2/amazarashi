@@ -1,5 +1,5 @@
 "use server";
-import { JSONAlbum } from "@/data/albums/type";
+import { JSONAlbum } from "@/data/types";
 import fs from "fs/promises";
 import path from "path";
 

@@ -12,13 +12,35 @@
     "english": {
       "type": "string"
     },
-    "original": {
+    "hiragana": {
       "type": "string"
     },
     "releaseDate": {
       "type": "string",
       "pattern": "^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}$"
+    },
+    "musics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "musicId": {
+            "type": "string"
+          },
+          "position": {
+            "type": "number"
+          }
+        },
+        "required": ["musicId", "position"]
+      }
     }
   },
-  "required": ["romanji", "portuguese", "english", "original", "releaseDate"]
+  "required": [
+    "romanji",
+    "portuguese",
+    "english",
+    "hiragana",
+    "releaseDate",
+    "musics"
+  ]
 }

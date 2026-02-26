@@ -1,8 +1,9 @@
 {
-  "$schema": "../schema.json",
+  "$schema": "../../schemas/album.json",
   "romanji": "Boikotto",
   "portuguese": "Boicote",
   "english": "Boycott",
-  "original": "ボイコット",
-  "releaseDate": "11/03/2020"
+  "hiragana": "ボイコット",
+  "releaseDate": "11/03/2020",
+  "musics": []
 }

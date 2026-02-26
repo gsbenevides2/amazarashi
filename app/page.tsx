@@ -1,8 +1,24 @@
+import { getAlbums } from "./_actions/getAlbums";
+import CoverSlider from "./_components/CoverSlider";
 import Hero from "./_components/Hero";
 import LatestRelease from "./_components/LatestRelease";
 import Spacer from "./_components/Spacer";
 
-export default function Home() {
+export default async function Home() {
+  const albums = await getAlbums();
+  const latestAlbums = albums
+    .sort(
+      (a, b) =>
+        new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime(),
+    )
+    .map((album) => ({
+      cover: {
+        alt: `Imagem do Album ${album.portuguese}`,
+        source: album.cover,
+      },
+      title: album.portuguese,
+      url: `/album/${album.id}`,
+    }));
   return (
     <>
       <Hero
@@ -29,6 +45,7 @@ export default function Home() {
         image="/albuns/sekai-shusoku-ni-ichi-ichi-roku.jpg"
       />
       <Spacer desktop={60} mobile={30} />
+      <CoverSlider title="Ultimos Albums" covers={latestAlbums} />
     </>
   );
 }
