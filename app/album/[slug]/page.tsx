@@ -1,10 +1,11 @@
-import { getAlbum } from "@/app/_actions/getAlbum";
+import { getAlbum } from "@/app/_actions/Albums/getAlbum";
 import AlbumInfo from "../../_components/AlbumInfo";
 import { notFound } from "next/navigation";
-import { getAlbumsIds } from "@/app/_actions/getAlbumsIds";
+import { getAlbumsIds } from "@/app/_actions/Albums/getAlbumsIds";
 import Spacer from "@/app/_components/Spacer";
 import MusicList from "@/app/_components/MusicList";
-import { getMusicsFromAlbum } from "@/app/_actions/getMusicsFromAlbum";
+import { getMusicsFromAlbum } from "@/app/_actions/Musics/getMusicsFromAlbum";
+import ShowBeforeAnimation from "@/app/_components/ShowBeforeAnimation";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -67,17 +68,19 @@ export default async function Album(props: Props) {
         }}
       />
       <Spacer desktop={40} mobile={20} />
-      <MusicList
-        musics={musics.map((music) => ({
-          id: music.id,
-          duration: music.duration,
-          name: music.nameRomaji,
-          position: music.position,
-          spotifyId: music.spotifyId ?? undefined,
-          youtubeMusicId: music.youtubeMusicId ?? undefined,
-          url: `/music/${music.id}`,
-        }))}
-      />
+      <ShowBeforeAnimation animation="awaitBottomAnimationFadInEnd">
+        <MusicList
+          musics={musics.map((music) => ({
+            id: music.id,
+            duration: music.duration,
+            name: music.nameRomaji,
+            position: music.position,
+            spotifyId: music.spotifyId ?? undefined,
+            youtubeMusicId: music.youtubeMusicId ?? undefined,
+            url: `/music/${music.id}`,
+          }))}
+        />
+      </ShowBeforeAnimation>
     </>
   );
 }

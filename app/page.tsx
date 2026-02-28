@@ -1,4 +1,4 @@
-import { getAlbums } from "./_actions/getAlbums";
+import { getAlbums } from "./_actions/Albums/getAlbums";
 import CoverSlider from "./_components/CoverSlider";
 import Hero from "./_components/Hero";
 import LatestRelease from "./_components/LatestRelease";
