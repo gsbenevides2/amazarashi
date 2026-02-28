@@ -1,10 +1,19 @@
 import { getAlbum } from "@/app/_actions/getAlbum";
 import AlbumInfo from "../../_components/AlbumInfo";
 import { notFound } from "next/navigation";
+import { getAlbumsIds } from "@/app/_actions/getAlbumsIds";
+import Spacer from "@/app/_components/Spacer";
+import MusicList from "@/app/_components/MusicList";
+import { getMusicsFromAlbum } from "@/app/_actions/getMusicsFromAlbum";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateStaticParams() {
+  const albumsIds = await getAlbumsIds();
+  return albumsIds.map((id) => ({ slug: id }));
+}
 
 export async function generateMetadata(props: Props) {
   const albumId = (await props.params).slug;
@@ -15,15 +24,15 @@ export async function generateMetadata(props: Props) {
     };
   }
   return {
-    title: `${albumData.romanji} - ${albumData.portuguese}`,
-    description: `Informações sobre o álbum ${albumData.romanji} (${albumData.portuguese}) lançado em ${albumData.releaseDate}.`,
+    title: `${albumData.nameRomaji} - ${albumData.namePortuguese}`,
+    description: `Informações sobre o álbum ${albumData.nameRomaji} (${albumData.namePortuguese}) lançado em ${albumData.releaseDate}.`,
     openGraph: {
-      title: `${albumData.romanji} - ${albumData.portuguese}`,
-      description: `Informações sobre o álbum ${albumData.romanji} (${albumData.portuguese}) lançado em ${albumData.releaseDate}.`,
+      title: `${albumData.nameRomaji} - ${albumData.namePortuguese}`,
+      description: `Informações sobre o álbum ${albumData.nameRomaji} (${albumData.namePortuguese}) lançado em ${albumData.releaseDate}.`,
       images: [
         {
-          url: albumData.cover,
-          alt: `Capa do álbum ${albumData.romanji} (${albumData.portuguese})`,
+          url: albumData.image,
+          alt: `Capa do álbum ${albumData.nameRomaji} (${albumData.namePortuguese})`,
         },
       ],
     },
@@ -32,7 +41,12 @@ export async function generateMetadata(props: Props) {
 
 export default async function Album(props: Props) {
   const albumId = (await props.params).slug;
-  const albumData = await getAlbum(albumId);
+
+  const [albumData, musics] = await Promise.all([
+    getAlbum(albumId),
+    getMusicsFromAlbum(albumId),
+  ]);
+
   if (!albumData) {
     notFound();
   }
@@ -41,16 +55,28 @@ export default async function Album(props: Props) {
       <AlbumInfo
         data={{
           cover: {
-            url: albumData.cover,
-            alt: `Imagem do Album ${albumData.portuguese}`,
+            url: albumData.image,
+            alt: `Imagem do Album ${albumData.namePortuguese}`,
           },
-          english: albumData.english,
-          hiragana: albumData.hiragana,
-          portuguese: albumData.portuguese,
+          english: albumData.nameEnglish,
+          hiragana: albumData.nameHiragana,
+          portuguese: albumData.namePortuguese,
           releaseDate: albumData.releaseDate,
-          romanji: albumData.romanji,
-          title: albumData.romanji,
+          romanji: albumData.nameRomaji,
+          title: albumData.nameRomaji,
         }}
+      />
+      <Spacer desktop={40} mobile={20} />
+      <MusicList
+        musics={musics.map((music) => ({
+          id: music.id,
+          duration: music.duration,
+          name: music.nameRomaji,
+          position: music.position,
+          spotifyId: music.spotifyId ?? undefined,
+          youtubeMusicId: music.youtubeMusicId ?? undefined,
+          url: `/music/${music.id}`,
+        }))}
       />
     </>
   );

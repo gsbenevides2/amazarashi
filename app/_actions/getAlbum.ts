@@ -1,19 +1,22 @@
 "use server";
-import { JSONAlbum } from "@/data/types";
-import fs from "fs/promises";
-import path from "path";
 
-export async function getAlbum(albumId: string) {
-  const dataExists = await fs
-    .readFile(
-      path.join(process.cwd(), "data", "albums", albumId, "data.json"),
-      "utf-8",
-    )
-    .then((data) => JSON.parse(data) as JSONAlbum)
-    .catch(() => null);
-  if (!dataExists) return null;
-  return {
-    ...dataExists,
-    cover: `/albums/${albumId}.jpg`,
-  };
+import { connectToDatabase } from "@/db";
+import { albunsTable } from "@/db/schema";
+import { eq } from "drizzle-orm";
+
+type Return = Promise<typeof albunsTable.$inferSelect | null>;
+
+export async function getAlbum(albumId: string): Return {
+  const db = connectToDatabase();
+
+  const album = await db
+    .select()
+    .from(albunsTable)
+    .where(eq(albunsTable.id, albumId))
+    .get();
+  if (!album) {
+    return null;
+  }
+
+  return album;
 }

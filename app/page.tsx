@@ -13,10 +13,10 @@ export default async function Home() {
     )
     .map((album) => ({
       cover: {
-        alt: `Imagem do Album ${album.portuguese}`,
-        source: album.cover,
+        alt: `Imagem do Album ${album.namePortuguese}`,
+        source: album.image,
       },
-      title: album.portuguese,
+      title: album.namePortuguese,
       url: `/album/${album.id}`,
     }));
   return (
@@ -42,7 +42,7 @@ export default async function Home() {
           'Amazarashi mais uma vez nos puxa para a realidade crua com "Taxi Driver", uma música que é tanto um desabafo quanto uma reflexão existencial. Em versos que mesclam o cotidiano sufocante das cidades com o vazio interno de seus personagens, a banda pinta um retrato brutalmente honesto da vida moderna — onde o conforto material contrasta com a desconexão humana.'
         }
         ctaLink="/music/taxi-driver"
-        image="/albuns/sekai-shusoku-ni-ichi-ichi-roku.jpg"
+        image="/albums/sekai-shusoku-ni-ichi-ichi-roku.jpg"
       />
       <Spacer desktop={60} mobile={30} />
       <CoverSlider title="Ultimos Albums" covers={latestAlbums} />
