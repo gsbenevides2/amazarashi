@@ -6,6 +6,7 @@ import Spacer from "@/app/_components/Spacer";
 import ShowBeforeAnimation from "@/app/_components/ShowBeforeAnimation";
 import MusicData from "@/app/_components/MusicData";
 import { getMusicsIds } from "@/app/_actions/Musics/getMusicsIds";
+import { getLyricsFromMusic } from "@/app/_actions/Lyrics/getLyricsFromMusic";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -43,9 +44,9 @@ export async function generateMetadata(props: Props) {
 export default async function Music(props: Props) {
   const musicId = (await props.params).slug;
 
-  const [musicData] = await Promise.all([
+  const [musicData, lyricsData] = await Promise.all([
     getMusic(musicId),
-    //getMusicsFromAlbum(albumId),
+    getLyricsFromMusic(musicId),
   ]);
 
   if (!musicData) {
@@ -80,7 +81,7 @@ export default async function Music(props: Props) {
             youtubeMusicId: musicData.youtubeMusicId,
             youtubeVideoClipId: musicData.youtubeVideoClipId,
           }}
-          lyrics={[]}
+          lyrics={lyricsData}
         />
       </ShowBeforeAnimation>
     </>
