@@ -8,9 +8,9 @@ export async function POST(request: NextRequest) {
   ) {
     return new Response("Unauthorized", { status: 401 });
   }
-  revalidatePath("/");
-  revalidatePath("/album/[slug]");
-  revalidatePath("/music/[slug]");
-  revalidatePath("/lyrics/[slug]");
+  revalidatePath("/", "page");
+  revalidatePath("/album/[slug]", "page");
+  revalidatePath("/music/[slug]", "page");
+  revalidatePath("/lyrics/[slug]", "page");
   return new Response("OK");
 }
