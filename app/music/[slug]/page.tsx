@@ -5,14 +5,15 @@ import MusicInfo from "@/app/_components/MusicInfo";
 import Spacer from "@/app/_components/Spacer";
 import ShowBeforeAnimation from "@/app/_components/ShowBeforeAnimation";
 import MusicData from "@/app/_components/MusicData";
+import { getMusicsIds } from "@/app/_actions/Musics/getMusicsIds";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
 export async function generateStaticParams() {
-  const albumsIds = await getAlbumsIds();
-  return albumsIds.map((id) => ({ slug: id }));
+  const musicsIds = await getMusicsIds();
+  return musicsIds.map((id) => ({ slug: id }));
 }
 
 export async function generateMetadata(props: Props) {
