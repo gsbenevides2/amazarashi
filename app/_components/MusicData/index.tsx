@@ -56,7 +56,7 @@ function MusicData(props: MusicDataProps) {
           <div className={activeTab !== "lyrics" ? "hidden" : ""}>
             <div className="flex justify-center mb-4">
               <a
-                href={`/lyrics-sync/${props.data.id}`}
+                href={`/lyrics/${props.data.id}`}
                 className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-md text-white transition-colors"
               >
                 <Icon id="view" size={20} strokeWidth={2} />

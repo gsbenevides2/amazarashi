@@ -8,12 +8,16 @@ export interface MusicLyric {
 }
 
 export interface LyricsLineText {
+  id: string;
   languageId: string;
   text: string;
 }
-
 export interface LyricsLine {
+  id: string;
+  position: number;
   texts: LyricsLineText[];
+  start: string;
+  end: string;
 }
 
 export interface Lyrics {

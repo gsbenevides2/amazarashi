@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { getAlbumsIds } from "@/app/_actions/Albums/getAlbumsIds";
 import { getMusic } from "@/app/_actions/Musics/getMusic";
 import MusicInfo from "@/app/_components/MusicInfo";
 import Spacer from "@/app/_components/Spacer";
