@@ -11,5 +11,6 @@ export async function POST(request: NextRequest) {
   revalidatePath("/");
   revalidatePath("/album/[slug]");
   revalidatePath("/music/[slug]");
+  revalidatePath("/lyrics/[slug]");
   return new Response("OK");
 }
