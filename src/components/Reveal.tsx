@@ -1,0 +1,46 @@
+"use client";
+
+import { useLayoutEffect, useRef, type ElementType, type HTMLAttributes } from "react";
+
+type Props = HTMLAttributes<HTMLElement> & { as?: ElementType; delay?: number; repeat?: boolean };
+
+// Revela ao rolar (medido em amazarashi.com: js-scroll dispara quando o topo cruza 80% da viewport;
+// 20px -> 0 + opacity, 0.9s cubic-bezier(0.215,0.61,0.355,1)). Sem JS ou com reduced-motion fica tudo visível.
+// Já visível no load: nunca é escondido. Por padrão revela uma vez só; com `repeat` anima toda vez que entra na tela
+// (inclusive o que já está visível ao montar) e volta a esconder ao sair.
+export default function Reveal({ as: Tag = "div", delay = 0, repeat = false, className = "", style, ...rest }: Props) {
+  const ref = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      delete el.dataset.reveal; // com `repeat` o servidor renderiza escondido: aqui volta a ficar visível
+      return;
+    }
+    if (!repeat && el.getBoundingClientRect().top < innerHeight * 0.8) return;
+    el.dataset.reveal = "pending";
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          el.dataset.reveal = "in";
+          if (!repeat) io.disconnect();
+        } else if (repeat) el.dataset.reveal = "pending";
+      },
+      { rootMargin: "0px 0px -20% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [repeat]);
+
+  return (
+    <Tag
+      ref={ref}
+      // repeat: nasce escondido no HTML do servidor para não piscar visível antes de hidratar e animar
+      data-reveal={repeat ? "pending" : undefined}
+      style={delay ? { ...style, transitionDelay: `${delay}ms` } : style}
+      className={`${className} data-[reveal=pending]:translate-y-5 data-[reveal=pending]:opacity-0 data-[reveal=in]:transition data-[reveal=in]:duration-900 data-[reveal=in]:ease-out-cubic`}
+      {...rest}
+    />
+  );
+}

@@ -1,0 +1,39 @@
+{
+  "name": "amazarashi",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --bun next dev",
+    "build": "bun run --bun next build",
+    "start": "bun run --bun next start",
+    "lint": "eslint",
+    "db:sync": "bun --bun run drizzle-kit push --config src/server/db/drizzle.config.ts",
+    "db:studio": "bun --bun run drizzle-kit studio --config src/server/db/drizzle.config.ts",
+    "gif:preview": "bun run scripts/generate-gif-previews.ts"
+  },
+  "dependencies": {
+    "@elysia/eden": "^1.4.10",
+    "@elysia/openapi": "^1.4.16",
+    "drizzle-orm": "^1.0.0-rc.4",
+    "elysia": "^1.4.30",
+    "next": "16.4.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/bun": "^1.4.3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "drizzle-kit": "^1.0.0-rc.4",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "trustedDependencies": [
+    "unrs-resolver"
+  ]
+}
