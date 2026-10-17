@@ -1,7 +1,7 @@
 import { SpanKind, trace } from "@opentelemetry/api";
 import type { SQL } from "bun";
 import { dbDuration } from "./metrics";
-import { recordSpanError } from "./span";
+import { recordSpanError, safeJson } from "./span";
 
 /** "SELECT * FROM users" -> { operation: "SELECT", table: "users" } */
 function parseStatement(statement: string) {
@@ -21,7 +21,7 @@ async function runTraced<T>(attributes: Record<string, string>, execute: () => P
     async (span) => {
       try {
         const result = await execute();
-        span.setAttribute("db.response.body", JSON.stringify(result));
+        span.setAttribute("db.response.body", safeJson(result));
         span.setAttribute("db.response.row_count", Array.isArray(result) ? result.length : 1);
         return result;
       } catch (error) {
@@ -43,7 +43,7 @@ function traceQuery<T>(serverAddress: string, statement: string, params: unknown
   const originalThen = query.then.bind(query);
   query.then = ((onFulfilled, onRejected) =>
     runTraced(
-      { "db.system.name": "postgresql", "server.address": serverAddress, "db.query.text": statement, "db.query.parameters": JSON.stringify(params) },
+      { "db.system.name": "postgresql", "server.address": serverAddress, "db.query.text": statement, "db.query.parameters": safeJson(params) },
       () => new Promise<T>((resolve, reject) => originalThen(resolve, reject)),
     ).then(onFulfilled, onRejected)) as SQL.Query<T>["then"];
   return query;
