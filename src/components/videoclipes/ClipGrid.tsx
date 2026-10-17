@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "../../lib/track";
 import Reveal from "../Reveal";
 import { underline } from "../links";
 import PlayIcon from "../PlayIcon";
@@ -13,6 +14,10 @@ const thumb = (c: Clip) => c.coverImage ?? `https://i.ytimg.com/vi/${c.youtubeId
 
 export default function ClipGrid({ clips }: { clips: Clip[] }) {
   const [current, setCurrent] = useState<Clip | null>(null);
+  const play = (c: Clip) => {
+    track("video_play", { source: "clip_grid", video_id: c.youtubeId });
+    setCurrent(c);
+  };
 
   return (
     <>
@@ -20,7 +25,7 @@ export default function ClipGrid({ clips }: { clips: Clip[] }) {
         {clips.map((c, i) => (
           <Reveal as="li" repeat key={c.youtubeId} delay={(i % 3) * 80} className="group">
             {/* miniatura só para mouse/toque; o botão do teclado e do leitor de tela fica no título (h2) */}
-            <button type="button" tabIndex={-1} aria-hidden onClick={() => setCurrent(c)} className="group/p block w-full cursor-pointer text-left">
+            <button type="button" tabIndex={-1} aria-hidden onClick={() => play(c)} className="group/p block w-full cursor-pointer text-left">
               <span className="relative block aspect-video overflow-hidden bg-card">
                 <Image src={thumb(c)} alt="" fill sizes="(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw" className="object-cover transition-opacity duration-300 motion-safe:group-hover:opacity-0" />
                 {c.gifPreview && (
@@ -31,7 +36,7 @@ export default function ClipGrid({ clips }: { clips: Clip[] }) {
               </span>
             </button>
             <h2 className="mt-4 text-lg leading-snug">
-              <button type="button" onClick={() => setCurrent(c)} aria-label={`Reproduzir ${c.romaji ?? c.title}`} className={`block w-fit cursor-pointer pb-1 text-left after:bottom-0 ${underline} group-hover:after:scale-x-100`}>
+              <button type="button" onClick={() => play(c)} aria-label={`Reproduzir ${c.romaji ?? c.title}`} className={`block w-fit cursor-pointer pb-1 text-left after:bottom-0 ${underline} group-hover:after:scale-x-100`}>
                 {c.romaji ?? c.title}
               </button>
             </h2>

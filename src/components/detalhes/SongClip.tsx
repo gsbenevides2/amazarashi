@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { track } from "../../lib/track";
 import PlayIcon from "../PlayIcon";
 
 type Props = { title: string; youtubeId: string; coverImage: string | null; gifPreview: string | null };
@@ -14,7 +15,10 @@ export default function SongClip({ title, youtubeId, coverImage, gifPreview }: P
     <>
       <button
         type="button"
-        onClick={() => setPlaying(true)}
+        onClick={() => {
+          track("video_play", { source: "song_clip", video_id: youtubeId });
+          setPlaying(true);
+        }}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         aria-label={`Reproduzir o videoclipe de ${title}`}

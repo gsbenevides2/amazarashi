@@ -121,7 +121,7 @@ export default function HeaderView({ menu, socials }: { menu: Menu; socials: Soc
           </ul>
         </nav>
         <SocialList socials={socials} className="flex gap-4 text-xs" iconClass="h-4.25 w-auto" />
-        <button type="button" onClick={() => setSearching(true)} aria-label="Buscar" className="-m-2 cursor-pointer p-2 hover:opacity-70">
+        <button type="button" onClick={() => setSearching(true)} data-ga="search_open" aria-label="Buscar" className="-m-2 cursor-pointer p-2 hover:opacity-70">
           <SearchIcon />
         </button>
       </div>
@@ -178,7 +178,7 @@ export default function HeaderView({ menu, socials }: { menu: Menu; socials: Soc
       <button
         type="button"
         onClick={() => setSearching(true)}
-        aria-label="Buscar"
+        data-ga="search_open" aria-label="Buscar"
         inert={open}
         className={`fixed right-20 top-4.5 z-20 cursor-pointer p-2 transition-[opacity,translate,visibility] ease-[cubic-bezier(0.19,1,0.22,1)] hover:opacity-70 motion-reduce:transition-none max-[900px]:md:right-24 min-[901px]:right-24 min-[901px]:top-6.75 ${
           open
@@ -195,7 +195,7 @@ export default function HeaderView({ menu, socials }: { menu: Menu; socials: Soc
       <button
         ref={button}
         type="button"
-        aria-label={open ? "Fechar menu" : "Abrir menu"}
+        data-ga="menu_toggle" aria-label={open ? "Fechar menu" : "Abrir menu"}
         aria-expanded={open}
         aria-controls="site-nav"
         onClick={() => setOpen((o) => !o)}

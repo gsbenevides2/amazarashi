@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "../../lib/track";
 
 type Show = { romaji: boolean; pt: boolean };
 
@@ -25,7 +26,10 @@ export function useShow() {
       key={k}
       type="button"
       aria-pressed={show[k]}
-      onClick={() => setShow((s) => ({ ...s, [k]: !s[k] }))}
+      onClick={() => {
+        track("lyrics_language_toggle", { language: k, visible: !show[k] });
+        setShow((s) => ({ ...s, [k]: !s[k] }));
+      }}
       className={`cursor-pointer border border-line px-3 py-1.5 font-latin text-xs uppercase transition-colors duration-300 ${cls} ${show[k] ? "bg-fg text-bg" : "text-fg/60 hover:text-fg"}`}
     >
       {label}

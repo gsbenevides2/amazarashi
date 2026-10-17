@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "../../lib/track";
 import Link from "next/link";
 
 export type Category = "single" | "album" | "dvd" | "streaming";
@@ -46,7 +47,10 @@ export default function Discography({ releases }: { releases: Release[] }) {
             <button
               type="button"
               aria-pressed={current === c.key}
-              onClick={() => setCurrent(c.key)}
+              onClick={() => {
+                track("discography_filter", { category: c.key });
+                setCurrent(c.key);
+              }}
               className={`cursor-pointer py-4 after:bottom-3 ${underline} ${current === c.key ? "after:scale-x-100" : "opacity-60 hover:opacity-100"}`}
             >
               {c.label}

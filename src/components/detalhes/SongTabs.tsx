@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { track } from "../../lib/track";
 import { underline } from "../links";
 
 // Abas Descrição / Letras / Mais informações. Todos os painéis vão no HTML (SEO); os inativos ficam `hidden`.
@@ -15,7 +16,10 @@ export default function SongTabs({ tabs }: { tabs: { label: string; content: Rea
             role="tab"
             type="button"
             aria-selected={i === n}
-            onClick={() => setI(n)}
+            onClick={() => {
+              setI(n);
+              track("song_tab_select", { tab: t.label });
+            }}
             className={`cursor-pointer py-4 after:bottom-3 ${underline} ${i === n ? "after:scale-x-100" : "opacity-60 hover:opacity-100"}`}
           >
             {t.label}

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { track } from "../../lib/track";
 
 type Album = { slug: string; title: string; romaji: string | null; nameEn: string | null; namePt: string | null; cover: string | null; date: string };
 type Song = { slug: string; romaji: string; kana: string; nameEn: string; namePt: string; album: string | null; albumTitle: string; cover: string | null };
@@ -55,7 +56,10 @@ export default function SearchDialog({ open, onClose }: { open: boolean; onClose
     );
   const row = (href: string, cover: string | null, title: string, sub: string, i: number) => (
     <li key={href} className="search-item" style={{ "--d": `${i * 40}ms` } as React.CSSProperties}>
-      <Link href={href} onClick={close} className="flex items-center gap-4 py-2 hover:bg-fg/5 focus-visible:bg-fg/5">
+      <Link href={href} onClick={() => {
+        track("search", { search_term: q.trim() });
+        close();
+      }} className="flex items-center gap-4 py-2 hover:bg-fg/5 focus-visible:bg-fg/5">
         <Thumb src={cover} />
         <span className="min-w-0">
           <span className="block truncate">{title}</span>

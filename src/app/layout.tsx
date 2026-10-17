@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { M_PLUS_1p, Montserrat } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "../lib/site";
@@ -35,7 +36,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <style>{"[data-reveal]{opacity:1!important;transform:none!important}"}</style>
         </noscript>
       </head>
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">{children}
+        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
+      </body>
     </html>
   );
 }

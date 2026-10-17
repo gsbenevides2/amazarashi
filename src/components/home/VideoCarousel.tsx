@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "../../lib/track";
 import Image from "next/image";
 import ArrowIcon from "../ArrowIcon";
 import PlayIcon from "../PlayIcon";
@@ -64,7 +65,10 @@ export default function VideoCarousel({ clips }: { clips: Clip[] }) {
           return (
             <li key={c.title} className="relative mr-[3.26%] w-full shrink-0" aria-current={active || undefined}>
               {active ? (
-                <button type="button" onClick={() => setPlaying(true)} aria-label={`Reproduzir ${c.title}`} className="group/p block w-full cursor-pointer">
+                <button type="button" onClick={() => {
+                  track("video_play", { source: "home_carousel", video_title: c.title });
+                  setPlaying(true);
+                }} aria-label={`Reproduzir ${c.title}`} className="group/p block w-full cursor-pointer">
                   {thumb}
                 </button>
               ) : (

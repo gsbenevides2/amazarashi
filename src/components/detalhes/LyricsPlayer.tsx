@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { track } from "../../lib/track";
 import PlayIcon from "../PlayIcon";
 
 // t = segundo do vídeo em que a linha começa; nulo = letra sem sincronia (só lista).
@@ -26,6 +27,7 @@ export function PlayerProvider({ youtubeId, lines = [], children }: { youtubeId:
 
   const start = (seek?: number) => {
     if (seek != null) pending.current = seek;
+    if (!started) track("video_play", { source: seek != null ? "lyrics_verse" : "song_player", video_id: youtubeId });
     setStarted(true);
   };
 
@@ -142,7 +144,11 @@ export function SyncedList() {
                 }}
                 type="button"
                 aria-current={i === active}
-                onClick={() => (player.current ? player.current.seekTo(l.t!, true) : start(l.t!))}
+                onClick={() => {
+                  track("lyrics_verse_seek", { verse: i + 1 });
+                  if (player.current) player.current.seekTo(l.t!, true);
+                  else start(l.t!);
+                }}
                 className={`block w-full cursor-pointer border-l-2 py-4 pl-5 text-left transition-[opacity,transform,border-color] duration-500 ease-out-cubic motion-reduce:transition-none ${
                   i === active ? "border-fg opacity-100 motion-safe:translate-x-2" : "border-transparent opacity-35 hover:opacity-70"
                 }`}
