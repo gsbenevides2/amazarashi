@@ -60,6 +60,8 @@ export default function Home() {
   return (
     <>
       <JsonLd data={{ "@type": "WebSite", name: "Amazarashi BR", url: abs("/"), inLanguage: "pt-BR", about: artist }} />
+      {/* só a home tem hero de abertura: o header espera 2,2s; nas outras páginas entra logo (padrão do CSS) */}
+      <style>{".header-in{--hd:2.2s}"}</style>
       <main>
         <Hero />
         <section id="albuns" aria-label="Álbuns" className="hero-albums relative z-10 mt-[-9vh]">

@@ -60,9 +60,9 @@ html {
   .hero-in { animation: hero-up 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) var(--d, 0ms) backwards; }
   .hero-albums { animation: hero-up 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) 1.7s backwards; }
   /* root só opacity/visibility (sem transform: contém o painel fixed) */
-  .header-in { animation: header-show 0.01s linear var(--hd, 2.2s) backwards; }
-  .header-logo { animation: header-logo 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) var(--hd, 2.2s) backwards; }
-  .header-nav { animation: header-fade 0.5s ease-out calc(var(--hd, 2.2s) + 0.2s) backwards; }
+  .header-in { animation: header-show 0.01s linear var(--hd, 0.2s) backwards; }
+  .header-logo { animation: header-logo 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) var(--hd, 0.2s) backwards; }
+  .header-nav { animation: header-fade 0.5s ease-out calc(var(--hd, 0.2s) + 0.2s) backwards; }
 }
 
 /* Telas 404/500: chuva caindo e código piscando */

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import ResourceAdmin from "../../../components/admin/ResourceAdmin";
 import { specs } from "../../../components/admin/specs";
 
+export const instant = false; 
 export const generateStaticParams = () => Object.keys(specs).map((resource) => ({ resource }));
 
 export default function Page({ params }: PageProps<"/admin/[resource]">) {

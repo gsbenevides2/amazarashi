@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import LyricsSync from "../../../../../components/admin/LyricsSync";
 
+export const instant = false; 
+
 export default function Page({ params }: PageProps<"/admin/songs/[id]/letra">) {
   return (
     <Suspense>

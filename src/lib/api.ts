@@ -6,7 +6,7 @@ export const api = treaty(app, { parseDate: false }).api;
 
 // Erro em lista = bug/banco fora do ar; deixa estourar no error.tsx. 404 de detalhe é tratado na página com notFound().
 export function unwrap<T>({ data, error }: { data: T | null; error: unknown }): T {
-  if (error || data === null) throw new Error("Falha ao consultar a API");
+  if (error || data === null) throw new Error("Falha ao consultar a API" + error + data);
   return data;
 }
 
