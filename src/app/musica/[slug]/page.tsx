@@ -80,7 +80,7 @@ async function Content({ slug }: { slug: string }) {
       />
       <JsonLd data={breadcrumb([["Início", "/"], ["Discografia", "/albuns-e-discos"], [album.romaji ?? album.title, `/album/${album.slug}`], [song.romaji, `/musica/${slug}`]])} />
       <PlayerProvider youtubeId={song.youtubeId} lines={song.lyrics}>
-      <Reveal as="section" className="mx-auto grid max-w-367 gap-12 px-6 pb-8 md:px-18.5 lg:grid-cols-[1fr_minmax(0,560px)] lg:items-start lg:gap-16">
+      <Reveal as="section" delay={1400} className="mx-auto grid max-w-367 gap-12 px-6 pb-8 md:px-18.5 lg:grid-cols-[1fr_minmax(0,560px)] lg:items-start lg:gap-16">
         <SongTabs
           tabs={[
             { label: "Descrição", content: <p>{description}</p> },

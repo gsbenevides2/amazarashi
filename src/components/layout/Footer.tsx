@@ -7,7 +7,7 @@ const link = `inline-block pb-1 after:bottom-0 ${underline}`;
 export default async function Footer() {
   const { menu, socials, settings } = await getChrome();
   return (
-    <footer className="mt-16 grid gap-8 px-6 pb-12 pt-10 md:mt-34.75 md:gap-12 md:pb-24 md:pt-22.5 md:grid-cols-[1fr_1fr_1fr_auto] md:px-18.5">
+    <footer className="mt-10 grid gap-8 px-6 pb-12 pt-10 md:mt-12 md:gap-12 md:pb-16 md:pt-12 md:grid-cols-[1fr_1fr_1fr_auto] md:px-18.5">
       <div className="flex w-fit flex-col items-center gap-2">
         <Image src="/logo-footer.svg" alt="Amazarashi BR" width={214} height={107} className="w-30 h-auto md:w-53.5" />
         <p className="font-latin text-sm">{settings.footer_tagline ?? "FANPAGE NÃO OFICIAL"}</p>

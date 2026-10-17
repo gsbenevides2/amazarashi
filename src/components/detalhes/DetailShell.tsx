@@ -19,7 +19,7 @@ export default function DetailShell({ eyebrow, names, cover, date, back, childre
     // --hd: sem hero de abertura, o header entra logo
     <div style={{ "--hd": "0.2s" } as CSSProperties}>
       <main>
-        <section className="relative overflow-hidden px-6 pb-12 pt-32 md:px-18.5 md:pb-20 md:pt-40">
+        <section className="relative overflow-hidden px-6 pb-8 pt-28 md:px-18.5 md:pb-8 md:pt-32">
           {cover ? <Image src={cover} alt="" aria-hidden fill sizes="100vw" quality={40} loading="eager" className="hero-art scale-110 object-cover opacity-30 blur-3xl" /> : null}
           <div aria-hidden className="absolute inset-0 bg-linear-to-b from-bg/0 to-bg" />
           <div className="relative mx-auto max-w-330">

@@ -48,13 +48,14 @@ async function Content({ slug }: { slug: string }) {
         }}
       />
       <JsonLd data={breadcrumb([["Início", "/"], ["Discografia", "/albuns-e-discos"], [album.romaji ?? album.title, `/album/${slug}`]])} />
-      <div className="mx-auto flex max-w-367 flex-wrap gap-4 px-6 pb-12 md:px-18.5">
+      <Reveal delay={1400} className="mx-auto flex max-w-367 flex-wrap gap-4 px-6 pb-8 md:px-18.5">
         <a href={album.spotifyUrl ?? undefined} target="_blank" rel="noreferrer" className={outlineButton}>OUVIR NO SPOTIFY</a>
         <a href={album.youtubeMusicUrl ?? undefined} target="_blank" rel="noreferrer" className={outlineButton}>YOUTUBE MUSIC</a>
-      </div>
-      <Reveal as="section" aria-labelledby="faixas" className={newLocal}>
-        <h2 id="faixas" className="font-latin text-2xl uppercase md:text-3xl">Lista de músicas</h2>
-        <ol className="mt-6 border-t border-line">
+      </Reveal>
+      <section aria-labelledby="faixas" className={newLocal}>
+        <Reveal as="h2" delay={1600} id="faixas" className="font-latin text-2xl uppercase md:text-3xl">Lista de músicas</Reveal>
+        <Reveal delay={1650} threshold={1} className="mt-6 h-px bg-line" />
+        <ol>
           {album.tracks.map((t, i) => {
             const row = (
               <>
@@ -68,7 +69,7 @@ async function Content({ slug }: { slug: string }) {
             );
             const cls = "group flex items-center border-b border-line py-5";
             return (
-              <li key={t.title}>
+              <Reveal as="li" key={t.title} delay={1700 + i * 80} threshold={1}>
                 {t.songSlug ? (
                   <Link href={`/musica/${t.songSlug}`} className={`${cls} transition-[padding] duration-500 ease-out-cubic hover:pl-3`}>
                     {row}
@@ -76,11 +77,11 @@ async function Content({ slug }: { slug: string }) {
                 ) : (
                   <div className={cls}>{row}</div>
                 )}
-              </li>
+              </Reveal>
             );
           })}
         </ol>
-      </Reveal>
+      </section>
     </DetailShell>
   );
 }
