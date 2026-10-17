@@ -47,7 +47,7 @@ export default function CardListSlider({ children, heading }: { children: React.
       <div
         ref={track}
         onScroll={update}
-        className="flex scroll-px-6 snap-x snap-mandatory gap-6 overflow-x-auto px-6 xl:scroll-px-0 xl:px-0 scrollbar-none [&::-webkit-scrollbar]:hidden"
+        className="flex scroll-px-6 snap-x snap-mandatory gap-6 overflow-x-auto overflow-y-hidden px-6 xl:scroll-px-0 xl:px-0 scrollbar-none [&::-webkit-scrollbar]:hidden"
       >
         {children}
       </div>
