@@ -2,7 +2,6 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { pageMeta } from "../../lib/site";
 import Link from "next/link";
-import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import Reveal from "../../components/Reveal";
 import { api, getChrome, unwrap } from "../../lib/api";
@@ -39,7 +38,6 @@ export default async function Biografia() {
         }}
       />
       <JsonLd data={breadcrumb([["Início", "/"], ["Biografia", "/biografia"]])} />
-      <Header />
       <main>
         <section className={`${wrap} pt-32 md:pt-40`}>
           <h1 style={d(250)} className="hero-in font-latin text-[clamp(32px,8vw,56px)] uppercase">Biografia</h1>

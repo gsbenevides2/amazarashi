@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { socialIcons, underline } from "../links";
 import Image from "next/image";
@@ -45,6 +47,7 @@ function SocialList({ socials, className, iconClass }: { socials: Socials; class
 }
 
 export default function HeaderView({ menu, socials }: { menu: Menu; socials: Socials }) {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -90,11 +93,14 @@ export default function HeaderView({ menu, socials }: { menu: Menu; socials: Soc
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
+  // admin tem navegação própria; só a home tem hero de abertura (header entra em 2,2s), nas demais entra logo
+  if (pathname.startsWith("/admin")) return null;
+
   const showBurger = scrolled || open;
   const close = () => setOpen(false);
 
   return (
-    <header className="header-in fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-x-6 px-6 py-5 max-[900px]:h-18 max-[900px]:py-0 md:px-10">
+    <header style={pathname === "/" ? undefined : ({ "--hd": "0.2s" } as CSSProperties)} className="header-in fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-x-6 px-6 py-5 max-[900px]:h-18 max-[900px]:py-0 md:px-10">
       <Link href="/" aria-label="Amazarashi BR" className="header-logo shrink-0">
         <Image src="/logo.svg" alt="Amazarashi BR" width={120} height={35} loading="eager" className="h-auto" />
       </Link>
@@ -113,9 +119,9 @@ export default function HeaderView({ menu, socials }: { menu: Menu; socials: Soc
           <ul className="flex gap-6 font-latin text-sm font-bold lowercase">
             {menu.map((i) => (
               <li key={i.href}>
-                <a href={i.href} className={menuLink}>
+                <Link href={i.href} className={menuLink}>
                   {i.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -163,9 +169,9 @@ export default function HeaderView({ menu, socials }: { menu: Menu; socials: Soc
             <ul className="font-latin font-bold lowercase leading-[1.2] text-[clamp(18px,6.133vw,30px)] md:w-[30%] md:text-[clamp(32px,2.857vw,48px)]">
               {menu.map((i) => (
                 <li key={i.href}>
-                  <a href={i.href} onClick={close} className={`${menuLink} md:py-0.5 md:after:bottom-0`}>
+                  <Link href={i.href} onClick={close} className={`${menuLink} md:py-0.5 md:after:bottom-0`}>
                     {i.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

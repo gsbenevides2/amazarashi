@@ -28,7 +28,14 @@ export default function SearchDialog({ open, onClose }: { open: boolean; onClose
   // Fecha só depois da animação de saída (sem ela, `animationend` nunca dispara)
   const close = () => {
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) onClose();
-    else setClosing(true);
+    else {
+      setClosing(true);
+      // fallback: se `animationend` não disparar, o <dialog> modal ficaria aberto e bloquearia a página
+      setTimeout(() => {
+        setClosing(false);
+        onClose();
+      }, 300);
+    }
   };
 
   useEffect(() => {
@@ -79,11 +86,6 @@ export default function SearchDialog({ open, onClose }: { open: boolean; onClose
         close();
       }}
       onClose={onClose}
-      onAnimationEnd={(e) => {
-        if (!closing || e.target !== e.currentTarget) return;
-        setClosing(false);
-        onClose();
-      }}
       onClick={(e) => e.target === e.currentTarget && close()}
       className="search-dialog fixed inset-0 m-0 h-full max-h-none w-full max-w-none bg-black/85 p-0 text-fg backdrop:bg-transparent open:block"
     >

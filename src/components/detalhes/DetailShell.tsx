@@ -1,6 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
-import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import Image from "next/image";
 
@@ -19,7 +18,6 @@ export default function DetailShell({ eyebrow, names, cover, date, back, childre
   return (
     // --hd: sem hero de abertura, o header entra logo
     <div style={{ "--hd": "0.2s" } as CSSProperties}>
-      <Header />
       <main>
         <section className="relative overflow-hidden px-6 pb-12 pt-32 md:px-18.5 md:pb-20 md:pt-40">
           {cover ? <Image src={cover} alt="" aria-hidden fill sizes="100vw" quality={40} loading="eager" className="hero-art scale-110 object-cover opacity-30 blur-3xl" /> : null}

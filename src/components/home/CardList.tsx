@@ -14,7 +14,7 @@ export default function CardList({ id, title, items, variant = "grid" }: Props) 
   );
 
   return (
-    <Reveal as="section" id={id} aria-labelledby={`${id}-title`} className="mt-16 overflow-x-clip pt-8 md:mt-34.75 md:pt-15">
+    <Reveal as="section" id={id} aria-labelledby={`${id}-title`} className="mt-10 overflow-x-clip pt-4 md:mt-16 md:pt-6">
       <div className="relative mx-auto max-w-300">
         {variant === "slider" ? null : heading}
         {variant === "slider" ? (

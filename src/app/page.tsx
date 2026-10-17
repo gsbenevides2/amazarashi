@@ -1,4 +1,3 @@
-import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import Reveal from "../components/Reveal";
 import Hero from "../components/home/Hero";
@@ -61,7 +60,6 @@ export default function Home() {
   return (
     <>
       <JsonLd data={{ "@type": "WebSite", name: "Amazarashi BR", url: abs("/"), inLanguage: "pt-BR", about: artist }} />
-      <Header />
       <main>
         <Hero />
         <section id="albuns" aria-label="Álbuns" className="hero-albums relative z-10 mt-[-9vh]">
