@@ -115,8 +115,8 @@ if (args.includes("--id")) {
 } else {
   // Limpar todos
   console.log("\n🧹 Limpando todos os GIFs e WEBMs...");
-  const { rowCount } = await db.update(musicVideos).set({ gifPreview: null, webmPreview: null });
-  console.log(`   ${rowCount} vídeo(s) limpo(s).`);
+   await db.update(musicVideos).set({ gifPreview: null, webmPreview: null })
+  console.log(`vídeo(s) limpo(s).`);
 
   // Buscar todos e regenerar
   const rows = await db.select({ youtubeId: musicVideos.youtubeId, title: musicVideos.title }).from(musicVideos);
