@@ -26,7 +26,7 @@ export default function SongClip({ title, youtubeId, coverImage, gifPreview, web
       >
         {/* sem coverImage cai na miniatura do próprio YouTube */}
         <Image src={coverImage ?? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`} alt="" fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
-        {hover && webmPreview && <video src={webmPreview} autoPlay loop muted playsInline fill sizes="560px" className="object-cover" />}
+        {hover && webmPreview && <video src={webmPreview} autoPlay loop muted playsInline className="absolute inset-0 size-full object-cover" />}
         {hover && !webmPreview && gifPreview && <Image src={gifPreview} alt="" fill unoptimized sizes="560px" className="object-cover" />}
         <PlayIcon />
       </button>

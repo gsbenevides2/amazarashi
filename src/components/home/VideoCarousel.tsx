@@ -55,7 +55,7 @@ export default function VideoCarousel({ clips }: { clips: Clip[] }) {
               style={{ background: `linear-gradient(135deg, ${c.from}, ${c.to})` }}
             >
               {active && c.webmPreview ? (
-                <video src={c.webmPreview} autoPlay loop muted playsInline fill sizes={thumbSizes} className="object-cover" />
+                <video src={c.webmPreview} autoPlay loop muted playsInline className="absolute inset-0 size-full object-cover" />
               ) : active && c.gifPreview ? (
                 <Image src={c.gifPreview} alt={`Miniatura de ${c.title}`} fill unoptimized sizes={thumbSizes} className="object-cover" />
               ) : c.coverImage ? (

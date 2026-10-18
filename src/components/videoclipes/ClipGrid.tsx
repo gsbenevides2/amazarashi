@@ -29,7 +29,7 @@ export default function ClipGrid({ clips }: { clips: Clip[] }) {
               <span className="relative block aspect-video overflow-hidden bg-card">
                 <Image src={thumb(c)} alt="" fill sizes="(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw" className="object-cover transition-opacity duration-300 motion-safe:group-hover:opacity-0" />
                 {c.webmPreview ? (
-                  <video src={c.webmPreview} autoPlay loop muted playsInline fill sizes="(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw" className="object-cover opacity-0 transition-opacity duration-300 motion-safe:group-hover:opacity-100" />
+                  <video src={c.webmPreview} autoPlay loop muted playsInline className="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-300 motion-safe:group-hover:opacity-100" />
                 ) : c.gifPreview ? (
                   <Image src={c.gifPreview} alt="" fill unoptimized sizes="(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw" className="object-cover opacity-0 transition-opacity duration-300 motion-safe:group-hover:opacity-100" />
                 ) : null}
