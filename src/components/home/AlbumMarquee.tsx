@@ -118,7 +118,7 @@ export default function AlbumMarquee({ albums }: { albums: Album[] }) {
       <div className="flex w-max">
         {[0, 1].map((copy) => (
           <ul key={copy} aria-hidden={copy === 1 || undefined} className="flex shrink-0">
-            {albums.map((a) => (
+            {albums.map((a, index) => (
               <li key={a.href} className="shrink-0 pr-6">
                 <a
                   href={a.href}
@@ -130,6 +130,8 @@ export default function AlbumMarquee({ albums }: { albums: Album[] }) {
                       src={a.cover}
                       alt={`Capa de ${a.title}`}
                       fill
+                      priority={index < 5}
+                      fetchPriority={index <5 ? "high": "auto"}
                       sizes="297px"
                       draggable={false}
                       className="object-cover transition-transform duration-700 ease-out-cubic motion-safe:group-hover:scale-110"
