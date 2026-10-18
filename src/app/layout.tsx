@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { M_PLUS_1p, Montserrat } from "next/font/google";
+import { Montserrat } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Header from "../components/layout/Header";
 import { SITE_URL } from "../lib/site";
@@ -12,11 +13,15 @@ const montserrat = Montserrat({
 });
 
 // Site de referência usa YakuHanRPs (self-hosted, fora do Google Fonts) com fallback "M PLUS 1p".
-const mplus = M_PLUS_1p({
+// Local, só subset latin: o next/font/google injeta ~250 @font-face (fatias CJK) num CSS de 70 KB que bloqueia a renderização.
+// Kana/kanji caem no fallback do sistema (--font-sans em globals.css).
+const mplus = localFont({
   variable: "--font-mplus",
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "700"],
-  preload: false, // sem subset japonês no next/font: kana/kanji caem no fallback do sistema
+  src: [
+    { path: "./fonts/mplus1p-latin-400.woff2", weight: "400" },
+    { path: "./fonts/mplus1p-latin-700.woff2", weight: "700" },
+  ],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
