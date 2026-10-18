@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { track } from "../../lib/track";
 import Image from "next/image";
 import ArrowIcon from "../ArrowIcon";
@@ -16,6 +16,17 @@ export default function VideoCarousel({ clips }: { clips: Clip[] }) {
   const [playing, setPlaying] = useState(false);
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
+  // O preview em vídeo (MBs) só começa a baixar depois do load, para não competir com a imagem do hero (LCP).
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    const on = () => setLoaded(true);
+    if (document.readyState === "complete") {
+      const t = setTimeout(on);
+      return () => clearTimeout(t);
+    }
+    addEventListener("load", on);
+    return () => removeEventListener("load", on);
+  }, []);
   const paused = hover || focus || playing;
   const n = clips.length;
   const go = (d: number) => setI((i + d + n) % n);
@@ -54,9 +65,9 @@ export default function VideoCarousel({ clips }: { clips: Clip[] }) {
               className="relative block aspect-video w-full"
               style={{ background: `linear-gradient(135deg, ${c.from}, ${c.to})` }}
             >
-              {active && c.webmPreview ? (
+              {active && loaded && c.webmPreview ? (
                 <video src={c.webmPreview} autoPlay loop muted playsInline className="absolute inset-0 size-full object-cover" />
-              ) : active && c.gifPreview ? (
+              ) : active && !c.webmPreview && c.gifPreview ? (
                 <Image src={c.gifPreview} alt={`Miniatura de ${c.title}`} fill unoptimized sizes={thumbSizes} className="object-cover" />
               ) : c.coverImage ? (
                 <Image src={c.coverImage} alt="" fill sizes={thumbSizes} className="object-cover" />
