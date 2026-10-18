@@ -31,7 +31,7 @@ export default async function Footer() {
       </div>
       <a
         href="#"
-        aria-label="Voltar ao topo"
+        aria-label="Ir ao topo"
         className="group relative block size-26.25 self-start focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-fg md:justify-self-end min-[901px]:size-38.75"
       >
         <svg
