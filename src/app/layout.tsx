@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 import { M_PLUS_1p, Montserrat } from "next/font/google";
 import "./globals.css";
 import Header from "../components/layout/Header";
@@ -40,7 +40,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col font-sans">
         <Header />
         {children}
-        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            {/* O init é minúsculo e define window.gtag cedo; só o gtag.js pesado (180 KB) espera o load da página. */}
+            <Script id="ga-init">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${process.env.NEXT_PUBLIC_GA_ID}')`}</Script>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} strategy="lazyOnload" />
+          </>
+        )}
       </body>
     </html>
   );

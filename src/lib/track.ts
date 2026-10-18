@@ -1,8 +1,12 @@
-import { sendGAEvent } from "@next/third-parties/google";
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
 
 // Evento do GA4 (no-op sem NEXT_PUBLIC_GA_ID). Marque como "evento-chave" no GA os que são conversão.
 export function track(event: string, params: Record<string, string | number | boolean> = {}) {
-  if (process.env.NEXT_PUBLIC_GA_ID) sendGAEvent("event", event, params);
+  if (process.env.NEXT_PUBLIC_GA_ID) window.gtag?.("event", event, params);
 }
 
 // Cliques delegados no document, sem tocar em cada componente:

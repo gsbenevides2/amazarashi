@@ -14,7 +14,6 @@
   "dependencies": {
     "@elysia/eden": "^1.4.10",
     "@elysia/openapi": "^1.4.16",
-    "@next/third-parties": "^16.4.2",
     "@openobserve/browser-logs": "^0.4.3",
     "@openobserve/browser-rum": "^0.4.3",
     "@opentelemetry/api": "^1.9.1",
