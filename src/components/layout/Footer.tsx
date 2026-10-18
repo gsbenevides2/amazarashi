@@ -63,7 +63,7 @@ export default async function Footer() {
           />
         </svg>
       </a>
-      <p className="text-xs text-line md:text-[11px] md:col-span-4">
+      <p className="text-xs text-fg/70 md:text-[11px] md:col-span-4">
         Fã-site não oficial. Imagens e marcas pertencem aos seus respectivos detentores.
       </p>
     </footer>
