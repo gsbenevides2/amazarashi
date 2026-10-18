@@ -6,7 +6,7 @@ import Image from "next/image";
 import ArrowIcon from "../ArrowIcon";
 import PlayIcon from "../PlayIcon";
 
-type Clip = { title: string; youtubeId: string; from: string; to: string; coverImage?: string | null; gifPreview?: string | null };
+type Clip = { title: string; youtubeId: string; from: string; to: string; coverImage?: string | null; gifPreview?: string | null; webmPreview?: string | null };
 
 const thumbSizes = "(min-width: 1248px) 770px, 64vw";
 const ease = "ease-[cubic-bezier(0.25,1,0.5,1)] motion-reduce:transition-none";
@@ -54,7 +54,9 @@ export default function VideoCarousel({ clips }: { clips: Clip[] }) {
               className="relative block aspect-video w-full"
               style={{ background: `linear-gradient(135deg, ${c.from}, ${c.to})` }}
             >
-              {active && c.gifPreview ? (
+              {active && c.webmPreview ? (
+                <video src={c.webmPreview} autoPlay loop muted playsInline fill sizes={thumbSizes} className="object-cover" />
+              ) : active && c.gifPreview ? (
                 <Image src={c.gifPreview} alt={`Miniatura de ${c.title}`} fill unoptimized sizes={thumbSizes} className="object-cover" />
               ) : c.coverImage ? (
                 <Image src={c.coverImage} alt="" fill sizes={thumbSizes} className="object-cover" />

@@ -67,6 +67,7 @@ export const musicVideos = pgTable("music_videos", {
   gradientTo: text().notNull(),
   coverImage: text(), // miniatura enviada ao S3
   gifPreview: text(), // GIF animado dos 10s iniciais (S3)
+  webmPreview: text(), // WEBM dos 10s iniciais (S3)
   position: integer(), // null = não aparece na página /videoclipes
 });
 

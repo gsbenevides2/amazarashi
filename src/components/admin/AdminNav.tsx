@@ -21,7 +21,7 @@ export default function AdminNav() {
       <a href="/oauth/logout" onClick={() => setLeaving(true)} aria-disabled={leaving} className={`text-fg/60 hover:text-fg ${leaving ? "pointer-events-none opacity-50" : ""}`}>
         {leaving ? "Saindo…" : "Sair"}
       </a>
-      {Object.entries(groups).map(([group, items]) => (
+      {Object.entries({ ...groups, Sistema: [["storage", "Armazenamento"]] }).map(([group, items]) => (
         <div key={group}>
           <p className="mb-2 font-latin text-xs uppercase tracking-widest text-fg/40">{group}</p>
           <ul className="space-y-1">

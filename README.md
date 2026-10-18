@@ -30,6 +30,7 @@ Abra [http://localhost:3000](http://localhost:3000).
 | `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_URL` | Bucket S3 das imagens |
 | `AUTHENTIK_ISSUER`, `AUTHENTIK_CLIENT_ID`, `AUTHENTIK_CLIENT_SECRET` | OAuth do admin |
 | `SESSION_SECRET` | Segredo de assinatura da sessão |
+| `ADMIN_AUTH_DISABLED` | `true` desliga o login do admin (páginas e `/api/admin`). Só vale em desenvolvimento; ignorado com `NODE_ENV=production` |
 
 ## Scripts
 

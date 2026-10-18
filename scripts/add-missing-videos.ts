@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Adiciona vídeos faltantes à tabela music_videos e gera GIFs.
+ * Adiciona vídeos faltantes à tabela music_videos e gera GIFs e WEBMs.
  * Classifica: MVs recebem position (aparecem em /videoclipes), outros sem position.
  */
 
@@ -89,46 +89,58 @@ async function downloadThumbnail(youtubeId: string): Promise<string | null> {
   return null;
 }
 
-async function generateGif(youtubeId: string): Promise<File> {
+async function downloadVideo(youtubeId: string, tmpDir: string): Promise<string> {
   const url = `https://www.youtube.com/watch?v=${youtubeId}`;
-  const tmpDir = `/tmp/gif-preview-${crypto.randomUUID()}`;
-  await Bun.spawn(["mkdir", "-p", tmpDir]).exited;
-
   const videoPath = `${tmpDir}/clip.mp4`;
+
+  console.log(`  ⬇ Baixando ${DURATION}s de ${youtubeId}...`);
+  const dl = Bun.spawn(
+    ["yt-dlp", "--cookies-from-browser", "chrome", "-f", "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best", "--merge-output-format", "mp4", "--download-sections", `*0-${DURATION}`, "-o", videoPath, url],
+    { stdout: "ignore", stderr: "pipe", env: { ...process.env, PATH } },
+  );
+  const dlExit = await dl.exited;
+  if (dlExit !== 0) {
+    const stderr = await new Response(dl.stderr).text();
+    throw new Error(`yt-dlp falhou (exit ${dlExit}): ${stderr.slice(-300)}`);
+  }
+
+  return videoPath;
+}
+
+async function generateGif(videoPath: string, tmpDir: string): Promise<File> {
   const gifPath = `${tmpDir}/preview.gif`;
 
-  try {
-    console.log(`  ⬇ Baixando ${DURATION}s de ${youtubeId}...`);
-    const dl = Bun.spawn(
-      ["yt-dlp", "--cookies-from-browser", "chrome", "-f", "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best", "--merge-output-format", "mp4", "--download-sections", `*0-${DURATION}`, "-o", videoPath, url],
-      { stdout: "ignore", stderr: "pipe", env: { ...process.env, PATH } },
-    );
-    const dlExit = await dl.exited;
-    if (dlExit !== 0) {
-      const stderr = await new Response(dl.stderr).text();
-      throw new Error(`yt-dlp falhou (exit ${dlExit}): ${stderr.slice(-300)}`);
-    }
+  console.log(`  🎞 Convertendo para GIF (${WIDTH}px, ${FPS}fps)...`);
+  const palettePath = `${tmpDir}/palette.png`;
 
-    console.log(`  🎞 Convertendo para GIF (${WIDTH}px, ${FPS}fps)...`);
-    const palettePath = `${tmpDir}/palette.png`;
+  const pal = Bun.spawn(
+    ["ffmpeg", "-y", "-i", videoPath, "-vf", `fps=${FPS},scale=${WIDTH}:-1:flags=lanczos,palettegen=max_colors=256:stats_mode=diff`, palettePath],
+    { stdout: "ignore", stderr: "ignore" },
+  );
+  if ((await pal.exited) !== 0) throw new Error("ffmpeg palettegen falhou");
 
-    const pal = Bun.spawn(
-      ["ffmpeg", "-y", "-i", videoPath, "-vf", `fps=${FPS},scale=${WIDTH}:-1:flags=lanczos,palettegen=max_colors=256:stats_mode=diff`, palettePath],
-      { stdout: "ignore", stderr: "ignore" },
-    );
-    if ((await pal.exited) !== 0) throw new Error("ffmpeg palettegen falhou");
+  const gif = Bun.spawn(
+    ["ffmpeg", "-y", "-i", videoPath, "-i", palettePath, "-lavfi", `fps=${FPS},scale=${WIDTH}:-1:flags=lanczos [x]; [x][1:v] paletteuse=dither=bayer:bayer_scale=2`, gifPath],
+    { stdout: "ignore", stderr: "ignore" },
+  );
+  if ((await gif.exited) !== 0) throw new Error("ffmpeg gif conversion falhou");
 
-    const gif = Bun.spawn(
-      ["ffmpeg", "-y", "-i", videoPath, "-i", palettePath, "-lavfi", `fps=${FPS},scale=${WIDTH}:-1:flags=lanczos [x]; [x][1:v] paletteuse=dither=bayer:bayer_scale=2`, gifPath],
-      { stdout: "ignore", stderr: "ignore" },
-    );
-    if ((await gif.exited) !== 0) throw new Error("ffmpeg gif conversion falhou");
+  const buf = await Bun.file(gifPath).arrayBuffer();
+  return new File([buf], `preview.gif`, { type: "image/gif" });
+}
 
-    const buf = await Bun.file(gifPath).arrayBuffer();
-    return new File([buf], `${youtubeId}-preview.gif`, { type: "image/gif" });
-  } finally {
-    await Bun.spawn(["rm", "-rf", tmpDir]).exited;
-  }
+async function generateWebm(videoPath: string, tmpDir: string): Promise<File> {
+  const webmPath = `${tmpDir}/preview.webm`;
+
+  console.log(`  🎬 Convertendo para WEBM (${WIDTH}px, ${FPS}fps, sem áudio)...`);
+  const webm = Bun.spawn(
+    ["ffmpeg", "-y", "-i", videoPath, "-vf", `fps=${FPS},scale=${WIDTH}:-1:flags=lanczos`, "-c:v", "libvpx-vp9", "-b:v", "2M", "-an", webmPath],
+    { stdout: "ignore", stderr: "ignore" },
+  );
+  if ((await webm.exited) !== 0) throw new Error("ffmpeg webm conversion falhou");
+
+  const buf = await Bun.file(webmPath).arrayBuffer();
+  return new File([buf], `preview.webm`, { type: "video/webm" });
 }
 
 // --- Main ---
@@ -151,6 +163,8 @@ for (const v of VIDEOS) {
   }
 
   console.log(`\n🎬 ${v.title} (${v.youtubeId}) - ${v.isMV ? "MV" : "Não-MV"}`);
+  const tmpDir = `/tmp/gif-preview-${crypto.randomUUID()}`;
+  await Bun.spawn(["mkdir", "-p", tmpDir]).exited;
 
   try {
     // 1. Thumbnail
@@ -158,16 +172,24 @@ for (const v of VIDEOS) {
     const coverImage = await downloadThumbnail(v.youtubeId);
     if (!coverImage) console.log(`  ⚠ Thumbnail não encontrada, usando null`);
 
-    // 2. GIF
-    const gifFile = await generateGif(v.youtubeId);
+    // 2. Baixar vídeo
+    const videoPath = await downloadVideo(v.youtubeId, tmpDir);
+
+    // 3. GIF
+    const gifFile = await generateGif(videoPath, tmpDir);
     console.log(`  ☁ Enviando GIF ao S3 (${(gifFile.size / 1024).toFixed(0)} KB)...`);
     const gifUrl = await uploadImage(gifFile);
 
-    // 3. Gradient
+    // 4. WEBM
+    const webmFile = await generateWebm(videoPath, tmpDir);
+    console.log(`  ☁ Enviando WEBM ao S3 (${(webmFile.size / 1024).toFixed(0)} KB)...`);
+    const webmUrl = await uploadImage(webmFile);
+
+    // 5. Gradient
     const gradient = GRADIENTS[gradientIdx % GRADIENTS.length];
     gradientIdx++;
 
-    // 4. Insert
+    // 6. Insert
     const position = v.isMV ? nextPosition++ : null;
     await db.insert(musicVideos).values({
       youtubeId: v.youtubeId,
@@ -178,11 +200,14 @@ for (const v of VIDEOS) {
       position,
       coverImage,
       gifPreview: gifUrl,
+      webmPreview: webmUrl,
     });
 
-    console.log(`  ✅ Adicionado! position=${position ?? "null"}, gif=${gifUrl}`);
+    console.log(`  ✅ Adicionado! position=${position ?? "null"}, gif=${gifUrl}, webm=${webmUrl}`);
   } catch (e) {
     console.error(`  ❌ Erro: ${e instanceof Error ? e.message : e}`);
+  } finally {
+    await Bun.spawn(["rm", "-rf", tmpDir]).exited;
   }
 }
 

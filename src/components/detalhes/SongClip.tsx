@@ -5,10 +5,10 @@ import Image from "next/image";
 import { track } from "../../lib/track";
 import PlayIcon from "../PlayIcon";
 
-type Props = { title: string; youtubeId: string; coverImage: string | null; gifPreview: string | null };
+type Props = { title: string; youtubeId: string; coverImage: string | null; gifPreview: string | null; webmPreview?: string | null };
 
-// Mesmo tratamento da home: o play se desenha no hover, o GIF só carrega no hover e o clique abre o vídeo em tela cheia.
-export default function SongClip({ title, youtubeId, coverImage, gifPreview }: Props) {
+// Mesmo tratamento da home: o play se desenha no hover, o GIF/WEBM só carrega no hover e o clique abre o vídeo em tela cheia.
+export default function SongClip({ title, youtubeId, coverImage, gifPreview, webmPreview }: Props) {
   const [hover, setHover] = useState(false);
   const [playing, setPlaying] = useState(false);
   return (
@@ -26,7 +26,8 @@ export default function SongClip({ title, youtubeId, coverImage, gifPreview }: P
       >
         {/* sem coverImage cai na miniatura do próprio YouTube */}
         <Image src={coverImage ?? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`} alt="" fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
-        {hover && gifPreview && <Image src={gifPreview} alt="" fill unoptimized sizes="560px" className="object-cover" />}
+        {hover && webmPreview && <video src={webmPreview} autoPlay loop muted playsInline fill sizes="560px" className="object-cover" />}
+        {hover && !webmPreview && gifPreview && <Image src={gifPreview} alt="" fill unoptimized sizes="560px" className="object-cover" />}
         <PlayIcon />
       </button>
       {playing && (

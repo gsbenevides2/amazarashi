@@ -2,8 +2,9 @@ import { revalidatePath } from "next/cache";
 import { Elysia, status } from "elysia";
 import { uploadImage } from "../../s3";
 import { idResponse, messageResponse } from "../../model";
-import { idParams, listResponse, recordBody, recordResponse, resourceParams, uploadBody, uploadResponse } from "./model";
+import { deleteOrphansBody, deleteOrphansResponse, idParams, listResponse, orphansResponse, recordBody, recordResponse, resourceParams, uploadBody, uploadResponse } from "./model";
 import { Admin } from "./service";
+import { Storage } from "./storage";
 
 // As páginas públicas são pré-renderizadas; qualquer edição invalida todas.
 const done = () => revalidatePath("/", "layout");
@@ -21,6 +22,14 @@ export const admin = new Elysia({ prefix: "/admin", detail: { tags: ["Admin"] } 
       return fail(e);
     }
   }, { body: uploadBody, response: { 200: uploadResponse, 400: messageResponse }, detail: { summary: "Enviar imagem", description: "Envia uma imagem para o S3 e retorna a URL." } })
+  .get("/storage", () => Storage.orphans(), { response: orphansResponse, detail: { summary: "Listar órfãos do S3", description: "Lista os arquivos do bucket que nenhum registro do banco referencia (ignora uploads da última hora)." } })
+  .delete("/storage", async ({ body }) => {
+    try {
+      return { deleted: await Storage.remove(body.keys) };
+    } catch (e) {
+      return fail(e);
+    }
+  }, { body: deleteOrphansBody, response: { 200: deleteOrphansResponse, 400: messageResponse }, detail: { summary: "Apagar órfãos do S3", description: "Apaga do bucket as chaves informadas que ainda forem órfãs." } })
   .get("/:resource", ({ params }) => {
     const name = params.resource;
     if (!Admin.isResource(name)) return unknownResource();

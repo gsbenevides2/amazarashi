@@ -51,6 +51,7 @@ export const musicVideoRow = describe(createSelectSchema(s.musicVideos), {
   gradientTo: m("Gradiente (fim)", "Cor CSS de reserva."),
   coverImage: m("Miniatura", "URL da miniatura no S3."),
   gifPreview: m("GIF de prévia", "GIF animado dos 10s iniciais, no S3."),
+  webmPreview: m("WEBM de prévia", "WEBM dos 10s iniciais, no S3."),
   position,
 });
 

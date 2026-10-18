@@ -7,7 +7,7 @@ import { underline } from "../links";
 import PlayIcon from "../PlayIcon";
 import Image from "next/image";
 
-type Clip = { title: string; romaji: string | null; youtubeId: string; coverImage: string | null; gifPreview?: string | null };
+type Clip = { title: string; romaji: string | null; youtubeId: string; coverImage: string | null; gifPreview?: string | null; webmPreview?: string | null };
 
 // Miniatura enviada ao S3; sem ela, a do YouTube.
 const thumb = (c: Clip) => c.coverImage ?? `https://i.ytimg.com/vi/${c.youtubeId}/hqdefault.jpg`;
@@ -28,9 +28,11 @@ export default function ClipGrid({ clips }: { clips: Clip[] }) {
             <button type="button" tabIndex={-1} aria-hidden onClick={() => play(c)} className="group/p block w-full cursor-pointer text-left">
               <span className="relative block aspect-video overflow-hidden bg-card">
                 <Image src={thumb(c)} alt="" fill sizes="(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw" className="object-cover transition-opacity duration-300 motion-safe:group-hover:opacity-0" />
-                {c.gifPreview && (
+                {c.webmPreview ? (
+                  <video src={c.webmPreview} autoPlay loop muted playsInline fill sizes="(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw" className="object-cover opacity-0 transition-opacity duration-300 motion-safe:group-hover:opacity-100" />
+                ) : c.gifPreview ? (
                   <Image src={c.gifPreview} alt="" fill unoptimized sizes="(min-width: 1024px) 33vw, (min-width: 600px) 50vw, 100vw" className="object-cover opacity-0 transition-opacity duration-300 motion-safe:group-hover:opacity-100" />
-                )}
+                ) : null}
                 <span aria-hidden className="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover/p:bg-black/30" />
                 <PlayIcon />
               </span>

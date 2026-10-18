@@ -15,6 +15,16 @@ export const uploadBody = z.object({
 
 export const uploadResponse = z.object({ url: z.string().meta({ title: "URL", description: "URL da imagem no S3." }) }).meta({ title: "Imagem enviada", description: "URL da imagem salva no S3." });
 
+export const orphansResponse = z.array(z.object({
+  key: z.string().meta({ title: "Chave", description: "Caminho do objeto no bucket." }),
+  size: z.number().meta({ title: "Tamanho", description: "Bytes." }),
+  modified: z.string().meta({ title: "Modificado em", description: "Data ISO do último upload." }),
+  url: z.string().meta({ title: "URL", description: "URL pública do objeto." }),
+})).meta({ title: "Arquivos órfãos", description: "Objetos do bucket que nenhum registro referencia." });
+
+export const deleteOrphansBody = z.object({ keys: z.array(z.string()).meta({ title: "Chaves", description: "Objetos a apagar; só os que ainda forem órfãos são removidos." }) });
+export const deleteOrphansResponse = z.object({ deleted: z.number().meta({ title: "Apagados", description: "Quantidade de objetos removidos." }) });
+
 const record = z.record(z.string().meta({ title: "Campo", description: "Nome do campo." }), z.any().meta({ title: "Valor", description: "Valor do campo." }));
 
 export const recordBody = record.meta({ title: "Registro", description: "Campos conforme o spec do recurso (components/admin/specs.ts)." });

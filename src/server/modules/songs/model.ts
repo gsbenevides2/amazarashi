@@ -26,6 +26,7 @@ export const songResponse = songRow
         youtubeId: z.string().meta({ title: "ID do YouTube", description: "ID do vídeo no YouTube." }),
         coverImage: z.string().nullable().meta({ title: "Miniatura", description: "URL da miniatura enviada ao S3." }),
         gifPreview: z.string().nullable().meta({ title: "GIF de prévia", description: "URL do GIF animado dos 10s iniciais." }),
+        webmPreview: z.string().nullable().meta({ title: "WEBM de prévia", description: "URL do WEBM dos 10s iniciais." }),
       })
       .nullable()
       .meta({ title: "Videoclipe", description: "Videoclipe oficial, quando existe." }),

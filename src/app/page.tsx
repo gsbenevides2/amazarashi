@@ -17,7 +17,7 @@ async function Albums() {
 
 async function Clips() {
   "use cache";
-  const clips = unwrap(await api["music-videos"].get()).slice(0, 5).map((c) => ({ title: c.romaji ?? c.title, youtubeId: c.youtubeId, from: c.gradientFrom, to: c.gradientTo, coverImage: c.coverImage, gifPreview: c.gifPreview }));
+  const clips = unwrap(await api["music-videos"].get()).slice(0, 5).map((c) => ({ title: c.romaji ?? c.title, youtubeId: c.youtubeId, from: c.gradientFrom, to: c.gradientTo, coverImage: c.coverImage, gifPreview: c.gifPreview, webmPreview: c.webmPreview }));
   return <VideoClipsSection clips={clips} />;
 }
 

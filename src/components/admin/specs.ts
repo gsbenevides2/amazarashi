@@ -127,6 +127,7 @@ export const specs: Record<string, Spec> = {
       f("gradientTo", "Gradiente (até)", "text", { required: true }),
       f("coverImage", "Miniatura (upload)", "image"),
       f("gifPreview", "GIF animado (upload)", "image"),
+      f("webmPreview", "WEBM (upload)", "image"),
       f("position", "Posição", "number", { required: true }),
     ],
   },

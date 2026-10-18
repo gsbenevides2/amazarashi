@@ -33,12 +33,12 @@ export abstract class Songs {
       .innerJoin(releases, eq(releases.id, tracks.releaseId))
       .where(eq(tracks.songId, song.id));
 
-    // miniatura e GIF do videoclipe, quando ele também está em /videoclipes
-    const [clip] = song.videoclipId ? await db.select({ coverImage: musicVideos.coverImage, gifPreview: musicVideos.gifPreview }).from(musicVideos).where(eq(musicVideos.youtubeId, song.videoclipId)) : [];
+    // miniatura, GIF e WEBM do videoclipe, quando ele também está em /videoclipes
+    const [clip] = song.videoclipId ? await db.select({ coverImage: musicVideos.coverImage, gifPreview: musicVideos.gifPreview, webmPreview: musicVideos.webmPreview }).from(musicVideos).where(eq(musicVideos.youtubeId, song.videoclipId)) : [];
 
     return {
       ...song,
-      videoclip: song.videoclipId ? { youtubeId: song.videoclipId, coverImage: clip?.coverImage ?? null, gifPreview: clip?.gifPreview ?? null } : null,
+      videoclip: song.videoclipId ? { youtubeId: song.videoclipId, coverImage: clip?.coverImage ?? null, gifPreview: clip?.gifPreview ?? null, webmPreview: clip?.webmPreview ?? null } : null,
       trackNumber: albumTracks.find((x) => x.songId === song.id)?.trackNumber ?? 1,
       album: { ...withCover(album), trackCount: albumTracks.length },
       appearsIn: appearsIn.map(withCover),
