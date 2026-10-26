@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps<"/musica/[slug]">):
   return {
     ...pageMeta(`/musica/${s.slug}`, `${s.romaji} (${s.nameEn}) — ${lyr ? "letra e tradução" : "música"}`, clip(`${lead} ${songBlurb(s.description)}`.trim()), "music.song"),
     // sem letra e com descrição em rascunho = página fina: fora do índice
-    ...(!lyr && isDraft(s.description) ? { robots: { index: false, follow: true } } : {}),
+    ...(!lyr && isDraft(s.description) ? { robots: { index: true, follow: true } } : {}),
   };
 }
 
