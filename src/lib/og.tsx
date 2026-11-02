@@ -41,9 +41,14 @@ async function palette(url: string) {
 // Subset da fonte (só os glifos usados) via Google Fonts; sem User-Agent o CSS vem com TTF, que o satori aceita.
 async function googleFont(family: string, text: string) {
   "use cache";
-  const css = await (await fetch(`https://fonts.googleapis.com/css2?family=${family}:wght@700&text=${encodeURIComponent(text)}`)).text();
-  const url = css.match(/src: url\((.+?)\) format\('(?:opentype|truetype)'\)/)?.[1];
-  return url ? new Uint8Array(await (await fetch(url)).arrayBuffer()) : null;
+  try {
+    const css = await (await fetch(`https://fonts.googleapis.com/css2?family=${family}:wght@700&text=${encodeURIComponent(text)}`)).text();
+    const url = css.match(/src: url\((.+?)\) format\('(?:opentype|truetype)'\)/)?.[1];
+    if (!url) return null;
+    return new Uint8Array(await (await fetch(url)).arrayBuffer());
+  } catch {
+    return null;
+  }
 }
 
 // Montserrat para o latim (igual ao site), Noto Sans JP para kana/kanji (o satori não tem CJK embutido).
