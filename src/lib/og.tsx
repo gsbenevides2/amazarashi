@@ -57,7 +57,8 @@ const fit = (t: string, big: number, small: number, limit: number) => (t.length 
 
 /** Home: hero em tela cheia, degradê escuro à esquerda e o título ao lado. */
 export async function heroImage({ image, title, subtitle }: { image?: string; title: string; subtitle: string }) {
-  const c = await palette(image ?? "");
+  // Skip palette loading if no image during build; prevents network calls during static generation
+  const c = image ? await palette(image) : { accent: RED, deep: "#7f1d1d", dark: "#140000" };
   return new ImageResponse(
     (
       <div style={{ display: "flex", width: "100%", height: "100%", background: `linear-gradient(135deg, ${c.deep}, ${c.accent})`, fontFamily: family, color: "white", position: "relative" }}>
