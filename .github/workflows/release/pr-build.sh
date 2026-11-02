@@ -3,4 +3,10 @@
 set -euo pipefail
 
 echo "Construindo imagem Docker"
-docker build --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t amazarashi-pr-test .
+# Build with timeout and progress to avoid GitHub Actions truncation issues
+timeout 600 docker build \
+  --progress=plain \
+  -t amazarashi-pr-test:latest \
+  . || exit 1
+
+echo "✅ Docker build completed successfully"
