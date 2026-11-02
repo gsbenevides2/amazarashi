@@ -1,5 +1,5 @@
 # Use an official Bun image as the base
-FROM oven/bun:latest AS deps
+FROM oven/bun:alpine AS deps
 
 # Set working directory
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY package.json bun.lock /app/
 RUN bun install
 
 # ---- Builder stage ----
-FROM oven/bun:latest AS builder
+FROM oven/bun:alpine AS builder
 WORKDIR /app
 
 # Copy installed dependencies and lockfiles from previous stage
@@ -26,12 +26,8 @@ COPY . .
 RUN SKIP_ENV_VALIDATION=1 bun run --bun build
 
 # ---- Production image ----
-FROM oven/bun:latest AS runner
+FROM oven/bun:alpine AS runner
 WORKDIR /app
-
-# wget is used by the container healthcheck
-RUN apt-get update && apt-get install -y --no-install-recommends wget && \
-    rm -rf /var/lib/apt/lists/*
 
 ENV TZ=America/Sao_Paulo
 ENV NODE_ENV=production
