@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { connection } from "next/server";
 import sharp from "sharp";
 import { getChrome } from "./api";
 
@@ -45,7 +46,7 @@ async function googleFont(family: string, text: string) {
     const css = await (await fetch(`https://fonts.googleapis.com/css2?family=${family}:wght@700&text=${encodeURIComponent(text)}`)).text();
     const url = css.match(/src: url\((.+?)\) format\('(?:opentype|truetype)'\)/)?.[1];
     if (!url) return null;
-    return new Uint8Array(await (await fetch(url)).arrayBuffer());
+    return Buffer.from(await (await fetch(url)).arrayBuffer()).toString("base64"); // string: o "use cache" corrompe Uint8Array ao ler do cache
   } catch {
     return null;
   }
@@ -54,7 +55,7 @@ async function googleFont(family: string, text: string) {
 // Montserrat para o latim (igual ao site), Noto Sans JP para kana/kanji (o satori não tem CJK embutido).
 async function fonts(text: string) {
   const [latin, jp] = await Promise.all([googleFont("Montserrat", text), googleFont("Noto+Sans+JP", text)]);
-  return [latin && { name: "Montserrat", data: latin.buffer as ArrayBuffer, weight: 700 as const }, jp && { name: "Noto Sans JP", data: jp.buffer as ArrayBuffer, weight: 700 as const }].filter((f) => !!f);
+  return [latin && { name: "Montserrat", data: Uint8Array.from(Buffer.from(latin, "base64")).buffer as ArrayBuffer, weight: 700 as const }, jp && { name: "Noto Sans JP", data: Uint8Array.from(Buffer.from(jp, "base64")).buffer as ArrayBuffer, weight: 700 as const }].filter((f) => !!f);
 }
 
 const family = "Montserrat, 'Noto Sans JP'";
@@ -62,6 +63,7 @@ const fit = (t: string, big: number, small: number, limit: number) => (t.length 
 
 /** Home: hero em tela cheia, degradê escuro à esquerda e o título ao lado. */
 export async function heroImage({ image, title, subtitle }: { image?: string; title: string; subtitle: string }) {
+  await connection(); // sem banco no build: gera por requisição
   // Skip palette loading if no image during build; prevents network calls during static generation
   const c = image ? await palette(image) : { accent: RED, deep: "#7f1d1d", dark: "#140000" };
   return new ImageResponse(
@@ -86,6 +88,7 @@ export async function heroImage({ image, title, subtitle }: { image?: string; ti
 
 /** Álbum/música: capa inclinada sobre a própria capa escurecida; nome (romaji + kana) ao lado. */
 export async function coverImage({ cover, eyebrow, title, kana, footer }: { cover: string; eyebrow: string; title: string; kana?: string | null; footer: string }) {
+  await connection(); // sem banco no build: gera por requisição
   const c = await palette(cover);
   return new ImageResponse(
     (
@@ -115,6 +118,7 @@ export async function coverImage({ cover, eyebrow, title, kana, footer }: { cove
 
 /** Páginas de listagem/texto: mesmo layout do hero, com o nome da página no lugar do título. */
 export async function pageImage(title: string, subtitle: string) {
+  await connection(); // sem banco no build: gera por requisição
   const { settings } = await getChrome();
   return heroImage({ image: settings.hero_image ?? undefined, title, subtitle });
 }

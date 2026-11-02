@@ -4,6 +4,7 @@ import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "../components/layout/Header";
+import Runtime from "../components/Runtime";
 import { SITE_URL } from "../lib/site";
 
 const montserrat = Montserrat({
@@ -43,7 +44,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </noscript>
       </head>
       <body className="min-h-full flex flex-col font-sans">
-        <Header />
+        <Runtime>
+          <Header />
+        </Runtime>
         {children}
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>

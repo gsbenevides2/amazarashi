@@ -3,6 +3,7 @@ import { SESSION, validBearer, verify } from "./lib/auth";
 
 // Admin (páginas e /api/admin) exige login; o resto do site e da API segue público.
 export async function proxy(req: NextRequest) {
+  if (req.nextUrl.pathname.startsWith("/isg")) return new NextResponse(null, { status: 404 }); // rota interna das páginas ISG
   // Só em dev: `ADMIN_AUTH_DISABLED=true` no .env pula o login. Em produção (NODE_ENV=production) é ignorado.
   if (process.env.NODE_ENV !== "production" && process.env.ADMIN_AUTH_DISABLED === "true") return NextResponse.next();
   if (await verify(req.cookies.get(SESSION)?.value)) return NextResponse.next();
@@ -15,4 +16,4 @@ export async function proxy(req: NextRequest) {
   return NextResponse.redirect(login);
 }
 
-export const config = { matcher: ["/admin/:path*", "/api/admin/:path*"] };
+export const config = { matcher: ["/isg/:path*", "/admin/:path*", "/api/admin/:path*"] };

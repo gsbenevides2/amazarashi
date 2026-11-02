@@ -12,6 +12,8 @@ import JsonLd, { abs, artist, breadcrumb } from "../../../components/JsonLd";
 import { outlineButton, underline } from "../../../components/links";
 import Image from "next/image";
 
+export const generateStaticParams = () => [{ slug: "__placeholder__" }]; // sem banco no build: demais slugs nascem no 1º acesso (ISG)
+
 export async function generateMetadata({ params }: PageProps<"/musica/[slug]">): Promise<Metadata> {
   const s = await getSong((await params).slug);
   if (!s) return { title: "Música não encontrada" };

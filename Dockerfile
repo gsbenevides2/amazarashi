@@ -23,7 +23,8 @@ COPY --from=deps /app/package.json ./package.json
 COPY . .
 
 # Build the Next.js app (output to .next)
-RUN SKIP_ENV_VALIDATION=1 bun run --bun build
+# Sem banco no build: só placeholders para módulos que parseiam URL na carga (valores reais vêm em runtime).
+RUN SITE_URL=http://localhost:3000 AUTHENTIK_ISSUER=http://build.invalid/ SKIP_ENV_VALIDATION=1 bun run --bun build
 
 # ---- Production image ----
 FROM oven/bun:latest AS runner
@@ -40,7 +41,9 @@ ENV NODE_ENV=production
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/bun.lock ./bun.lock
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./next
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/next.config.ts ./next.config.ts
+COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 

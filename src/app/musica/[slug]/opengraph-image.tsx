@@ -4,7 +4,6 @@ import { coverImage, ogSize } from "../../../lib/og";
 export const alt = "Música — Amazarashi BR";
 export const size = ogSize;
 export const contentType = "image/png";
-export const generateStaticParams = async () => unwrap(await api.songs.get());
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const s = await getSong((await params).slug);

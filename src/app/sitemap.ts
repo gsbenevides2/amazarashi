@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { connection } from "next/server";
 import { api, unwrap } from "../lib/api";
 import { SITE_URL } from "../lib/site";
 
@@ -15,6 +16,7 @@ async function entries() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  await connection(); // sem banco no build
   const { albums, songs, latest } = await entries();
   const at = (d: string) => (d ? new Date(d) : undefined);
   return [

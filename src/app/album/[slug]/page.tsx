@@ -8,6 +8,8 @@ import { pageMeta, isoDuration, clip, releaseKind } from "../../../lib/site";
 import JsonLd, { abs, artist, breadcrumb } from "../../../components/JsonLd";
 import { outlineButton, underline } from "../../../components/links";
 
+export const generateStaticParams = () => [{ slug: "__placeholder__" }]; // sem banco no build: demais slugs nascem no 1º acesso (ISG)
+
 export async function generateMetadata({ params }: PageProps<"/album/[slug]">): Promise<Metadata> {
   const a = await getAlbum((await params).slug);
   if (!a) return { title: "Álbum não encontrado" };

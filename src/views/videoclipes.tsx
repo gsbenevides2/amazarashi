@@ -1,12 +1,8 @@
 import type { CSSProperties } from "react";
-import type { Metadata } from "next";
-import { pageMeta } from "../../lib/site";
-import Footer from "../../components/layout/Footer";
-import ClipGrid from "../../components/videoclipes/ClipGrid";
-import { api, unwrap } from "../../lib/api";
-import JsonLd, { artist, breadcrumb, collectionPage } from "../../components/JsonLd";
-
-export const metadata: Metadata = pageMeta("/videoclipes", "Vídeoclipes", "Todos os videoclipes do Amazarashi.");
+import Footer from "../components/layout/Footer";
+import ClipGrid from "../components/videoclipes/ClipGrid";
+import { api, unwrap } from "../lib/api";
+import JsonLd, { artist, breadcrumb, collectionPage } from "../components/JsonLd";
 
 async function Clips() {
   "use cache";
