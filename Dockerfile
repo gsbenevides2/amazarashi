@@ -23,8 +23,7 @@ COPY --from=deps /app/package.json ./package.json
 COPY . .
 
 # Build the Next.js app (output to .next)
-# Sem banco no build: só placeholders para módulos que parseiam URL na carga (valores reais vêm em runtime).
-RUN SITE_URL=http://localhost:3000 AUTHENTIK_ISSUER=http://build.invalid/ SKIP_ENV_VALIDATION=1 bun run --bun build
+RUN SKIP_ENV_VALIDATION=1 bun run --bun build
 
 # ---- Production image ----
 FROM oven/bun:latest AS runner

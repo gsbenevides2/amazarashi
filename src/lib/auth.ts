@@ -1,6 +1,6 @@
 // Login único via Authentik (OIDC, authorization code). Só autenticação: quem logou, entra em tudo.
 // Sessão = cookie assinado com HMAC (stateless), sem banco.
-const issuer = process.env.AUTHENTIK_ISSUER!; // https://sso.../application/o/<slug>/
+const issuer = process.env.AUTHENTIK_ISSUER || "http://build.invalid/"; // https://sso.../application/o/<slug>/ (fallback só para o build sem env; em runtime vem do ambiente)
 const origin = new URL(issuer).origin;
 export const endpoints = {
   authorize: `${origin}/application/o/authorize/`,

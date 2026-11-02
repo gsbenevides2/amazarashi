@@ -24,7 +24,7 @@ O projeto usa `cacheComponents: true`. **Não use `export const dynamic = "force
 - **`"use cache"` e binários**: o cache corrompe `Uint8Array` ao ler (imagens OG quebravam na 2ª chamada). Cacheie string (base64) e decodifique fora do cache, como `googleFont` em `src/lib/og.tsx`.
 
 ### Dockerfile
-- O build define placeholders de `SITE_URL` e `AUTHENTIK_ISSUER` (módulos que parseiam URL na carga); os valores reais vêm em runtime.
+- Nenhuma variável é necessária no build: `src/lib/auth.ts` e `src/server/db/index.ts` têm fallback para o módulo carregar (os valores reais vêm em runtime). Todo build (CI, Docker) herda isso, sem placeholders nos workflows.
 - A imagem final precisa de `.next`, `next.config.ts` (sem ele o runtime perde `cacheComponents` e as páginas dão 500 `DYNAMIC_SERVER_USAGE`) e `public/`.
 - `.dockerignore` evita levar `node_modules`, `.next` e `.env` do host para a imagem.
 
