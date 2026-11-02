@@ -5,7 +5,8 @@ const s3 = process.env.S3_PUBLIC_URL ? new URL(process.env.S3_PUBLIC_URL) : null
 
 const nextConfig: NextConfig = {
   /* config options here */
-  // cacheComponents + partialPrefetching disabled: incompatible with dynamic = "force-dynamic" for build independence
+  cacheComponents: true,
+  // partialPrefetching disabled: partialPrefetching requires cacheComponents but causes issues with force-dynamic
   // Em dev o S3 pode resolver para IP da rede local, que o Next bloqueia por padrão (SSRF); em produção continua bloqueado.
   // minimumCacheTTL de 1 ano: as capas têm UUID no nome (imutáveis).
   // deviceSizes começa em 384: com qualquer `100vw` no sizes o Next só gera srcset a partir do menor deviceSize (640),

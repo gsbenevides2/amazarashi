@@ -12,9 +12,6 @@ import JsonLd, { abs, artist, breadcrumb } from "../../../components/JsonLd";
 import { outlineButton, underline } from "../../../components/links";
 import Image from "next/image";
 
-// Lê o banco a cada request; sem isso a página é pré-renderizada no build (sem DATABASE_URL) e fica vazia.
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata({ params }: PageProps<"/musica/[slug]">): Promise<Metadata> {
   const s = await getSong((await params).slug);
   if (!s) return { title: "Música não encontrada" };

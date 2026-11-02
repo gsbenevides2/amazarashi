@@ -2,9 +2,6 @@ import type { MetadataRoute } from "next";
 import { api, unwrap } from "../lib/api";
 import { SITE_URL } from "../lib/site";
 
-// Lê o banco a cada request; sem isso o sitemap é pré-renderizado no build (sem DATABASE_URL) e fica vazio.
-export const dynamic = "force-dynamic";
-
 // Cacheado: o admin invalida com revalidatePath("/", "layout").
 // ponytail: lastmod = data de lançamento (não há updatedAt no banco); upgrade: coluna updated_at se quiser lastmod real.
 async function entries() {

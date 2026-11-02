@@ -8,9 +8,6 @@ import VideoClipsSection from "../components/home/VideoClipsSection";
 import { api, getChrome, unwrap } from "../lib/api";
 import JsonLd, { abs, artist } from "../components/JsonLd";
 
-// Lê o banco a cada request; sem isso a página é pré-renderizada no build (sem DATABASE_URL) e fica vazia.
-export const dynamic = "force-dynamic";
-
 async function Albums() {
   "use cache";
   const list = unwrap(await api.releases.get({ query: { category: "album" } })).slice(0, 6);
