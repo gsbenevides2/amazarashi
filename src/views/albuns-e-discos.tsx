@@ -1,13 +1,7 @@
-import type { Metadata } from "next";
-import { pageMeta } from "../../lib/site";
-import Footer from "../../components/layout/Footer";
-import Discography from "../../components/albuns-e-discos/Discography";
-import { api, getChrome, unwrap } from "../../lib/api";
-import JsonLd, { abs, artist, breadcrumb, collectionPage } from "../../components/JsonLd";
-
-export const metadata: Metadata = pageMeta("/albuns-e-discos", "Discografia", "Álbuns, singles e DVDs do Amazarashi.");
-// Lê o banco a cada request; sem isso a página é pré-renderizada no build (sem DATABASE_URL) e fica vazia.
-export const dynamic = "force-dynamic";
+import Footer from "../components/layout/Footer";
+import Discography from "../components/albuns-e-discos/Discography";
+import { api, getChrome, unwrap } from "../lib/api";
+import JsonLd, { abs, artist, breadcrumb, collectionPage } from "../components/JsonLd";
 
 async function List() {
   "use cache";

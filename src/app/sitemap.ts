@@ -1,9 +1,7 @@
 import type { MetadataRoute } from "next";
+import { connection } from "next/server";
 import { api, unwrap } from "../lib/api";
 import { SITE_URL } from "../lib/site";
-
-// Lê o banco a cada request; sem isso o sitemap é pré-renderizado no build (sem DATABASE_URL) e fica vazio.
-export const dynamic = "force-dynamic";
 
 // Cacheado: o admin invalida com revalidatePath("/", "layout").
 // ponytail: lastmod = data de lançamento (não há updatedAt no banco); upgrade: coluna updated_at se quiser lastmod real.
@@ -18,6 +16,7 @@ async function entries() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  await connection(); // sem banco no build
   const { albums, songs, latest } = await entries();
   const at = (d: string) => (d ? new Date(d) : undefined);
   return [

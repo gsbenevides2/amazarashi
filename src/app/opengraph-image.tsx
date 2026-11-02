@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { getChrome } from "../lib/api";
 import { heroImage, ogSize } from "../lib/og";
 
@@ -6,6 +7,7 @@ export const size = ogSize;
 export const contentType = "image/png";
 
 export default async function Image() {
+  await connection(); // sem banco no build
   const { settings: s } = await getChrome();
   return heroImage({ image: s.hero_image ?? undefined, title: s.hero_title ?? "Amazarashi", subtitle: s.hero_subtitle ?? "Sua FanPage brasileira" });
 }

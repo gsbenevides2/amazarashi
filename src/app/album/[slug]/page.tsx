@@ -8,8 +8,7 @@ import { pageMeta, isoDuration, clip, releaseKind } from "../../../lib/site";
 import JsonLd, { abs, artist, breadcrumb } from "../../../components/JsonLd";
 import { outlineButton, underline } from "../../../components/links";
 
-// Lê o banco a cada request; sem isso a página é pré-renderizada no build (sem DATABASE_URL) e fica vazia.
-export const dynamic = "force-dynamic";
+export const generateStaticParams = () => [{ slug: "__placeholder__" }]; // sem banco no build: demais slugs nascem no 1º acesso (ISG)
 
 export async function generateMetadata({ params }: PageProps<"/album/[slug]">): Promise<Metadata> {
   const a = await getAlbum((await params).slug);

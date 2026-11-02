@@ -1,14 +1,8 @@
 import type { CSSProperties } from "react";
-import type { Metadata } from "next";
-import { pageMeta } from "../../lib/site";
-import Footer from "../../components/layout/Footer";
-import ClipGrid from "../../components/videoclipes/ClipGrid";
-import { api, unwrap } from "../../lib/api";
-import JsonLd, { artist, breadcrumb, collectionPage } from "../../components/JsonLd";
-
-export const metadata: Metadata = pageMeta("/videoclipes", "Vídeoclipes", "Todos os videoclipes do Amazarashi.");
-// Lê o banco a cada request; sem isso a página é pré-renderizada no build (sem DATABASE_URL) e fica vazia.
-export const dynamic = "force-dynamic";
+import Footer from "../components/layout/Footer";
+import ClipGrid from "../components/videoclipes/ClipGrid";
+import { api, unwrap } from "../lib/api";
+import JsonLd, { artist, breadcrumb, collectionPage } from "../components/JsonLd";
 
 async function Clips() {
   "use cache";
