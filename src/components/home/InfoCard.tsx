@@ -1,6 +1,6 @@
 // Imagem real: coloque o arquivo em public/ e passe image={{ src: "/nome.jpg", alt: "..." }}.
 // ponytail: image.mobileSrc é aceito mas ignorado (next/image não usa <picture>); upgrade via getImageProps se precisar.
-import Image from "next/image";
+import Img from "@/src/components/Img";
 import ArrowIcon from "../ArrowIcon";
 import { outlineButton } from "../links";
 
@@ -39,10 +39,10 @@ export default function InfoCard({
   const picture = image ? (
     image.href ? (
       <a href={image.href} className="absolute inset-0">
-        <Image src={image.src} alt={image.alt} fill sizes={sizes} className="object-cover" />
+        <Img src={image.src} alt={image.alt} fill sizes={sizes} className="object-cover" />
       </a>
     ) : (
-      <Image src={image.src} alt={image.alt} fill sizes={sizes} className="object-cover" />
+      <Img src={image.src} alt={image.alt} fill sizes={sizes} className="object-cover" />
     )
   ) : (
     <div aria-hidden className="absolute inset-0 bg-linear-to-br from-card to-bg" />

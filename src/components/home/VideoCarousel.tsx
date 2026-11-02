@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { track } from "../../lib/track";
 import Image from "next/image";
+import Img from "@/src/components/Img";
 import ArrowIcon from "../ArrowIcon";
 import PlayIcon from "../PlayIcon";
 
@@ -70,7 +71,7 @@ export default function VideoCarousel({ clips }: { clips: Clip[] }) {
               ) : active && !c.webmPreview && c.gifPreview ? (
                 <Image src={c.gifPreview} alt={`Miniatura de ${c.title}`} fill unoptimized sizes={thumbSizes} className="object-cover" />
               ) : c.coverImage ? (
-                <Image src={c.coverImage} alt="" fill sizes={thumbSizes} className="object-cover" />
+                <Img src={c.coverImage} alt="" fill sizes={thumbSizes} className="object-cover" />
               ) : null}
               {active && <PlayIcon />}
             </span>

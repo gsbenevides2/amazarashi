@@ -161,3 +161,9 @@ export const socialLinks = pgTable("social_links", {
   href: text().notNull(),
   position: integer().notNull(),
 });
+
+// Blur placeholder (webp minúsculo em data URL) por imagem do S3, gerado no upload; consultado pelo componente Img.
+export const imageBlurs = pgTable("image_blurs", {
+  url: text().primaryKey(),
+  blur: text().notNull(),
+});

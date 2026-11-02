@@ -1,11 +1,12 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
+import BlurScope from "@/src/components/BlurScope";
 import Footer from "../components/layout/Footer";
 import Reveal from "../components/Reveal";
 import { api, getChrome, unwrap } from "../lib/api";
 import JsonLd, { abs, artist, breadcrumb } from "../components/JsonLd";
 import { underline } from "../components/links";
-import Image from "next/image";
+import Img from "@/src/components/Img";
 
 const d = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 const wrap = "mx-auto max-w-[calc(1320px+9.25rem)] px-6 md:px-18.5";
@@ -16,6 +17,7 @@ export default async function Biografia() {
   const [{ stats, members, timeline, animeSongs, sources }, { settings }] = await Promise.all([api.biography.get().then(unwrap), getChrome()]);
   return (
     // --hd: sem hero de abertura, o header entra logo
+    <BlurScope>
     <div style={{ "--hd": "0.2s" } as CSSProperties}>
       <JsonLd
         data={{
@@ -82,7 +84,7 @@ export default async function Biografia() {
               <li key={a.id} className="group">
                 <Link href={a.slug ? `/musica/${a.slug}` : "/albuns-e-discos"} className="block">
                   <div className="aspect-square overflow-hidden bg-card">
-                    {a.coverImage ? <Image src={a.coverImage} alt={`Capa de ${a.song}`} width={600} height={600} sizes="(min-width: 1024px) 20vw, (min-width: 500px) 50vw, 100vw" className="size-full object-cover transition-transform duration-700 ease-out-cubic motion-safe:group-hover:scale-105" /> : null}
+                    {a.coverImage ? <Img src={a.coverImage} alt={`Capa de ${a.song}`} width={600} height={600} sizes="(min-width: 1024px) 20vw, (min-width: 500px) 50vw, 100vw" className="size-full object-cover transition-transform duration-700 ease-out-cubic motion-safe:group-hover:scale-105" /> : null}
                   </div>
                   <p className="mt-4 font-latin text-sm text-fg/60 transition-colors duration-700 group-hover:text-fg">{a.year} / {a.role}</p>
                   <h3 className={`mt-1 w-fit pb-1 leading-snug after:bottom-0 ${underline} group-hover:after:scale-x-100`}>{a.song}</h3>
@@ -114,5 +116,6 @@ export default async function Biografia() {
       </main>
       <Footer />
     </div>
+    </BlurScope>
   );
 }

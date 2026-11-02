@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
+import Img from "@/src/components/Img";
 
 type Album = { title: string; year: number; cover: string; href: string };
 
@@ -126,7 +126,7 @@ export default function AlbumMarquee({ albums }: { albums: Album[] }) {
                   className="group relative flex h-91.75 w-74.25 flex-col justify-end overflow-hidden p-5"
                 >
                   {a.cover ? (
-                    <Image
+                    <Img
                       src={a.cover}
                       alt={`Capa de ${a.title}`}
                       fill

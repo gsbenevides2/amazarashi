@@ -1,5 +1,6 @@
 import Footer from "../components/layout/Footer";
 import Discography from "../components/albuns-e-discos/Discography";
+import BlurScope from "@/src/components/BlurScope";
 import { api, getChrome, unwrap } from "../lib/api";
 import JsonLd, { abs, artist, breadcrumb, collectionPage } from "../components/JsonLd";
 
@@ -26,6 +27,7 @@ async function Intro() {
 export default function Musicas() {
   return (
     // --hd: sem hero, o header entra logo (padrão da home é 2,2s)
+    <BlurScope>
     <div style={{ "--hd": "0.2s" } as React.CSSProperties}>
       <main className="mx-auto w-full max-w-330 px-6 pt-32 md:px-10 md:pt-40">
         <h1 style={{ "--d": "250ms" } as React.CSSProperties} className="hero-in mb-10 font-latin text-[clamp(32px,8vw,56px)] uppercase md:mb-14">Discografia</h1>
@@ -34,5 +36,6 @@ export default function Musicas() {
       </main>
       <Footer />
     </div>
+    </BlurScope>
   );
 }

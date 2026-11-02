@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Img from "@/src/components/Img";
 import { track } from "../../lib/track";
 import PlayIcon from "../PlayIcon";
 
@@ -25,7 +26,7 @@ export default function SongClip({ title, youtubeId, coverImage, gifPreview, web
         className="group/p relative block aspect-video w-full cursor-pointer overflow-hidden bg-card"
       >
         {/* sem coverImage cai na miniatura do próprio YouTube */}
-        <Image src={coverImage ?? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`} alt="" fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
+        <Img src={coverImage ?? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`} alt="" fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
         {hover && webmPreview && <video src={webmPreview} autoPlay loop muted playsInline className="absolute inset-0 size-full object-cover" />}
         {hover && !webmPreview && gifPreview && <Image src={gifPreview} alt="" fill unoptimized sizes="560px" className="object-cover" />}
         <PlayIcon />

@@ -5,6 +5,7 @@ import AlbumMarquee from "../components/home/AlbumMarquee";
 import CardList from "../components/home/CardList";
 import InfoCardList from "../components/home/InfoCardList";
 import VideoClipsSection from "../components/home/VideoClipsSection";
+import BlurScope from "@/src/components/BlurScope";
 import { api, getChrome, unwrap } from "../lib/api";
 import JsonLd, { abs, artist } from "../components/JsonLd";
 
@@ -58,6 +59,7 @@ async function Blocks() {
 
 export default function Home() {
   return (
+    <BlurScope>
     <>
       <JsonLd data={{ "@type": "WebSite", name: "Amazarashi BR", url: abs("/"), inLanguage: "pt-BR", about: artist }} />
       {/* só a home tem hero de abertura: o header espera 2,2s; nas outras páginas entra logo (padrão do CSS) */}
@@ -73,5 +75,6 @@ export default function Home() {
       </main>
       <Footer />
     </>
+    </BlurScope>
   );
 }

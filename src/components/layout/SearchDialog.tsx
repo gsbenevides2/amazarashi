@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Img from "@/src/components/Img";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { track } from "../../lib/track";
@@ -15,7 +15,7 @@ const norm = (s: string) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCas
 const hit = (q: string, ...fields: (string | null)[]) => fields.some((f) => f && norm(f).includes(q));
 
 function Thumb({ src }: { src: string | null }) {
-  return <span className="relative block size-12 shrink-0 bg-card">{src && <Image src={src} alt="" fill sizes="48px" className="object-cover" />}</span>;
+  return <span className="relative block size-12 shrink-0 bg-card">{src && <Img src={src} alt="" fill sizes="48px" className="object-cover" />}</span>;
 }
 
 export default function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void }) {

@@ -1,7 +1,9 @@
 import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
+import BlurScope from "@/src/components/BlurScope";
 import Footer from "../layout/Footer";
 import Image from "next/image";
+import Img from "@/src/components/Img";
 
 export type Names = { romaji: string; kana: string; en: string; pt: string };
 
@@ -17,6 +19,7 @@ export default function DetailShell({ eyebrow, names, cover, date, back, childre
   ];
   return (
     // --hd: sem hero de abertura, o header entra logo
+    <BlurScope>
     <div style={{ "--hd": "0.2s" } as CSSProperties}>
       <main>
         <section className="relative overflow-hidden px-6 pb-8 pt-28 md:px-18.5 md:pb-8 md:pt-32">
@@ -28,7 +31,7 @@ export default function DetailShell({ eyebrow, names, cover, date, back, childre
               {back.label}
             </Link>
             <div className="mt-8 grid items-end gap-8 lg:grid-cols-[minmax(0,320px)_1fr] lg:gap-14">
-              {cover ? <Image src={cover} alt={`Capa de ${names.romaji}`} width={600} height={600} priority sizes="320px" className="hero-art aspect-square w-full max-w-80 object-cover shadow-2xl lg:max-w-none" /> : <div />}
+              {cover ? <Img src={cover} alt={`Capa de ${names.romaji}`} width={600} height={600} priority sizes="320px" className="hero-art aspect-square w-full max-w-80 object-cover shadow-2xl lg:max-w-none" /> : <div />}
               <div>
                 <p style={d(900)} className="hero-in font-latin text-sm uppercase text-fg/60">{eyebrow}</p>
                 <h1 style={d(1000)} className="hero-in mt-2 font-latin text-[clamp(36px,8vw,80px)] font-bold uppercase leading-none">{names.romaji}</h1>
@@ -48,5 +51,6 @@ export default function DetailShell({ eyebrow, names, cover, date, back, childre
       </main>
       <Footer />
     </div>
+    </BlurScope>
   );
 }

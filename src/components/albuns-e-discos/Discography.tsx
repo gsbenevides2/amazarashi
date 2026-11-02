@@ -15,7 +15,7 @@ const categories: { key: Category | "all"; label: string }[] = [
 ];
 import { underline } from "../links";
 import Reveal from "../Reveal";
-import Image from "next/image";
+import Img from "@/src/components/Img";
 
 const typeLabel: Record<Category, string> = { single: "Single", album: "Álbum", dvd: "DVD/BD", streaming: "Streaming" };
 
@@ -24,7 +24,7 @@ export type Release = { slug: string | null; category: Category; title: string; 
 const card = (r: Release, dup: boolean) => (
   <>
     <div className="aspect-square overflow-hidden bg-card">
-      {r.cover ? <Image src={r.cover} alt={`Capa de ${r.romaji ?? r.title}`} width={600} height={600} sizes="(min-width: 1024px) 25vw, 50vw" className="size-full object-cover transition-transform duration-700 ease-out-cubic motion-safe:group-hover:scale-105" /> : null}
+      {r.cover ? <Img src={r.cover} alt={`Capa de ${r.romaji ?? r.title}`} width={600} height={600} sizes="(min-width: 1024px) 25vw, 50vw" className="size-full object-cover transition-transform duration-700 ease-out-cubic motion-safe:group-hover:scale-105" /> : null}
     </div>
     <p className="mt-4 font-latin text-sm text-fg/60 transition-colors duration-700 group-hover:text-fg">
       {r.releaseDate.replaceAll("-", ".")} / {typeLabel[r.category]}

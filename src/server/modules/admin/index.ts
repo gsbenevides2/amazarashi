@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { Elysia, status } from "elysia";
+import { saveBlur } from "../../blur";
 import { uploadImage } from "../../s3";
 import { idResponse, messageResponse } from "../../model";
 import { deleteOrphansBody, deleteOrphansResponse, idParams, listResponse, orphansResponse, recordBody, recordResponse, resourceParams, uploadBody, uploadResponse } from "./model";
@@ -17,7 +18,9 @@ const unknownResource = () => status(404, { message: "Recurso inexistente" });
 export const admin = new Elysia({ prefix: "/admin", detail: { tags: ["Admin"] } })
   .post("/upload", async ({ body }) => {
     try {
-      return { url: await uploadImage(body.file) };
+      const url = await uploadImage(body.file);
+      await saveBlur(url, Buffer.from(await body.file.arrayBuffer())).catch(() => {}); // sem blur cai no placeholder genérico
+      return { url };
     } catch (e) {
       return fail(e);
     }

@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import BlurScope from "@/src/components/BlurScope";
 import Footer from "../components/layout/Footer";
 import ClipGrid from "../components/videoclipes/ClipGrid";
 import { api, unwrap } from "../lib/api";
@@ -29,6 +30,7 @@ async function Clips() {
 export default function Videoclipes() {
   return (
     // --hd: sem hero de abertura, o header entra logo
+    <BlurScope>
     <div style={{ "--hd": "0.2s" } as CSSProperties}>
       <main className="mx-auto w-full max-w-367 px-6 pt-32 md:px-18.5 md:pt-40">
         <h1 style={{ "--d": "250ms" } as CSSProperties} className="hero-in mb-10 font-latin text-[clamp(32px,8vw,56px)] uppercase md:mb-14">Vídeoclipes</h1>
@@ -36,5 +38,6 @@ export default function Videoclipes() {
       </main>
       <Footer />
     </div>
+    </BlurScope>
   );
 }

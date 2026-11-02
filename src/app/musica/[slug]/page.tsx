@@ -10,7 +10,7 @@ import { api, brDate, getSong, unwrap } from "../../../lib/api";
 import { pageMeta, isoDuration, clip, isDraft, songBlurb } from "../../../lib/site";
 import JsonLd, { abs, artist, breadcrumb } from "../../../components/JsonLd";
 import { outlineButton, underline } from "../../../components/links";
-import Image from "next/image";
+import Img from "@/src/components/Img";
 
 export const generateStaticParams = () => [{ slug: "__placeholder__" }]; // sem banco no build: demais slugs nascem no 1º acesso (ISG)
 
@@ -130,7 +130,7 @@ async function Content({ slug }: { slug: string }) {
             <li key={a.slug} className="group">
               <Link href={`/album/${a.slug}`} className="block">
                 <div className="aspect-square overflow-hidden bg-card">
-                  {a.cover ? <Image src={a.cover} alt={`Capa de ${a.romaji ?? a.title}`} width={600} height={600} sizes="(min-width: 1024px) 25vw, (min-width: 500px) 50vw, 100vw" className="size-full object-cover transition-transform duration-700 ease-out-cubic motion-safe:group-hover:scale-105" /> : null}
+                  {a.cover ? <Img src={a.cover} alt={`Capa de ${a.romaji ?? a.title}`} width={600} height={600} sizes="(min-width: 1024px) 25vw, (min-width: 500px) 50vw, 100vw" className="size-full object-cover transition-transform duration-700 ease-out-cubic motion-safe:group-hover:scale-105" /> : null}
                 </div>
                 <p className="mt-4 font-latin text-sm text-fg/60 transition-colors duration-700 group-hover:text-fg">{brDate(a.releaseDate)} / {a.trackCount} faixas</p>
                 <h3 className={`mt-1 w-fit pb-1 text-lg leading-snug after:bottom-0 ${underline} group-hover:after:scale-x-100`}>{a.title}</h3>

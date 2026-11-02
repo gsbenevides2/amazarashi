@@ -1,5 +1,7 @@
 import { treaty } from "@elysia/eden";
 import { app } from "../server";
+import { db } from "../server/db";
+import { imageBlurs } from "../server/db/schema";
 
 // Server Components chamam o app direto, sem HTTP. parseDate:false: datas ISO ficam string, como nos tipos.
 export const api = treaty(app, { parseDate: false }).api;
@@ -28,4 +30,10 @@ export async function getAlbum(slug: string) {
 export async function getSong(slug: string) {
   "use cache";
   return (await api.songs({ slug }).get()).data;
+}
+
+export async function getBlurs() {
+  "use cache";
+  const rows = await db.select().from(imageBlurs);
+  return Object.fromEntries(rows.map((r) => [r.url, r.blur]));
 }

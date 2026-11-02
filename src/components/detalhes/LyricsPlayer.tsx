@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Img from "@/src/components/Img";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { track } from "../../lib/track";
 import PlayIcon from "../PlayIcon";
@@ -88,7 +88,7 @@ export function SongPlayer({ title }: { title: string }) {
       <div ref={host} className="size-full" />
       {!started && (
         <button type="button" onClick={() => start()} aria-label={`Reproduzir ${title}`} className="group/p absolute inset-0 cursor-pointer">
-          <Image src={`https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`} alt="" fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
+          <Img src={`https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`} alt="" fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
           <PlayIcon />
         </button>
       )}
