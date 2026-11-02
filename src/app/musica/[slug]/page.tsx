@@ -14,6 +14,7 @@ import Image from "next/image";
 
 // Slug criado no admin depois do build renderiza sob demanda (bloqueante); os do build são estáticos.
 export const instant = false;
+export const revalidate = 3600; // ISG: Revalidate every hour for dynamic params
 
 export const generateStaticParams = async () => unwrap(await api.songs.get()).map(({ slug }) => ({ slug }));
 

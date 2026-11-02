@@ -7,6 +7,7 @@ import { api, unwrap } from "../../lib/api";
 import JsonLd, { artist, breadcrumb, collectionPage } from "../../components/JsonLd";
 
 export const metadata: Metadata = pageMeta("/videoclipes", "Vídeoclipes", "Todos os videoclipes do Amazarashi.");
+export const revalidate = 3600; // ISG: Revalidate every hour
 
 async function Clips() {
   "use cache";

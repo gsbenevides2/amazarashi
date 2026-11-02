@@ -8,6 +8,8 @@ import VideoClipsSection from "../components/home/VideoClipsSection";
 import { api, getChrome, unwrap } from "../lib/api";
 import JsonLd, { abs, artist } from "../components/JsonLd";
 
+export const revalidate = 3600; // ISG: Revalidate every hour
+
 async function Albums() {
   "use cache";
   const list = unwrap(await api.releases.get({ query: { category: "album" } })).slice(0, 6);

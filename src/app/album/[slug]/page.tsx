@@ -10,6 +10,7 @@ import { outlineButton, underline } from "../../../components/links";
 
 // Slug criado no admin depois do build renderiza sob demanda (bloqueante); os do build são estáticos.
 export const instant = false;
+export const revalidate = 3600; // ISG: Revalidate every hour for dynamic params
 
 export const generateStaticParams = async () => unwrap(await api.releases.get({ query: {} })).flatMap((r) => (r.slug ? [{ slug: r.slug }] : []));
 

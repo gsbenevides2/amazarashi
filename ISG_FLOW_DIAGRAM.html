@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISG Flow - Amazarashi</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #fff;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #b0b0b0;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .section h2 {
+            color: #4a9eff;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .mermaid {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .benefit-card {
+            background: rgba(74, 158, 255, 0.1);
+            border-left: 4px solid #4a9eff;
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .benefit-card:hover {
+            background: rgba(74, 158, 255, 0.15);
+            transform: translateX(5px);
+        }
+        
+        .benefit-card h3 {
+            color: #4a9eff;
+            margin-bottom: 10px;
+        }
+        
+        .benefit-card p {
+            color: #d0d0d0;
+            font-size: 0.95em;
+        }
+        
+        code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #a8ff60;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .comparison > div {
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+        
+        .before {
+            background: rgba(255, 0, 0, 0.05);
+            border-color: rgba(255, 0, 0, 0.3);
+        }
+        
+        .after {
+            background: rgba(0, 255, 0, 0.05);
+            border-color: rgba(0, 255, 0, 0.3);
+        }
+        
+        .before h3, .after h3 {
+            margin-bottom: 10px;
+        }
+        
+        .before h3 {
+            color: #ff6b6b;
+        }
+        
+        .after h3 {
+            color: #51cf66;
+        }
+        
+        .before ul, .after ul {
+            list-style-position: inside;
+            font-size: 0.95em;
+        }
+        
+        .before li, .after li {
+            margin: 8px 0;
+            color: #d0d0d0;
+        }
+        
+        .before li::marker {
+            color: #ff6b6b;
+        }
+        
+        .after li::marker {
+            color: #51cf66;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 30px;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: #4a9eff;
+            border-radius: 50%;
+            border: 3px solid rgba(74, 158, 255, 0.3);
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 9px;
+            top: 20px;
+            width: 2px;
+            height: 40px;
+            background: rgba(74, 158, 255, 0.3);
+        }
+
+        .timeline-item h4 {
+            color: #4a9eff;
+            margin-bottom: 5px;
+        }
+
+        .timeline-item p {
+            color: #d0d0d0;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 ISG (Incremental Static Generation)</h1>
+        <p class="subtitle">Otimização do Build Docker do Amazarashi</p>
+
+        <!-- Visão Geral -->
+        <div class="section">
+            <h2>📊 Visão Geral</h2>
+            <div class="mermaid">
+                <pre>graph LR
+    A["🐳 Docker Build"] -->|DATABASE_URL| B["Next.js Build"]
+    B -->|generateStaticParams| C["Pre-renderiza Slugs"]
+    C -->|Gera HTML Estático| D[".next/out"]
+    D -->|Deploy| E["🚀 Produção"]
+    E -->|Hora 1| F["✅ Serve HTML Cached"]
+    E -->|Hora 3600| G["🔄 Revalida em BG"]
+    G -->|Nova Hora| F</pre>
+            </div>
+        </div>
+
+        <!-- Build Process -->
+        <div class="section">
+            <h2>🔨 Processo de Build</h2>
+            <div class="mermaid">
+                <pre>sequenceDiagram
+    participant Build as Docker Build
+    participant DB as Banco de Dados
+    participant Next as Next.js
+    participant Out as .next/out
+
+    Build->>Next: npm run build
+    Next->>Next: Executa generateStaticParams()
+    Next->>DB: Busca todos os slugs
+    DB-->>Next: [album-1, album-2, ...song-1, song-2]
+    
+    Note over Next: Pre-renderiza cada página<br/>com dados do banco
+    
+    Next->>Out: Salva /album/album-1/index.html
+    Next->>Out: Salva /album/album-2/index.html
+    Next->>Out: Salva /musica/song-1/index.html
+    Out-->>Build: ✅ Build Completo!</pre>
+            </div>
+        </div>
+
+        <!-- Runtime Production -->
+        <div class="section">
+            <h2>⚡ Runtime em Produção</h2>
+            <div class="mermaid">
+                <pre>sequenceDiagram
+    participant User as Usuário
+    participant Prod as Produção
+    participant Cache as Cache HTML
+    participant Server as Next.js Server
+    participant DB as Banco de Dados
+
+    User->>Prod: GET /album/album-1
+    Prod->>Cache: Busca HTML cached
+    Cache-->>Prod: ✅ Encontrado!
+    Prod-->>User: Serve HTML instantaneamente
+
+    Note over Prod: Revalidação em Background<br/>(após 3600s)
+    
+    Prod->>Prod: 3600s passados
+    Prod->>Server: Regenera /album/album-1
+    Server->>DB: Busca dados atualizados
+    DB-->>Server: Retorna dados
+    Server->>Cache: Atualiza Cache
+    Cache-->>Prod: ✅ Pronto para próximo request!</pre>
+            </div>
+        </div>
+
+        <!-- Antes e Depois -->
+        <div class="section">
+            <h2>🔄 Comparação: Antes vs Depois</h2>
+            <div class="comparison">
+                <div class="before">
+                    <h3>❌ Antes (Sem ISG)</h3>
+                    <ul>
+                        <li>Build SEMPRE precisa do banco</li>
+                        <li>Falha se banco está down</li>
+                        <li>Build lento: todas as páginas</li>
+                        <li>Request → Renderiza → Usuário (lento)</li>
+                        <li>Sem cache entre requests</li>
+                        <li>Alto load no banco durante build</li>
+                    </ul>
+                </div>
+                <div class="after">
+                    <h3>✅ Depois (Com ISG)</h3>
+                    <ul>
+                        <li>Build pode rodar sem banco</li>
+                        <li>Resiliência a falhas</li>
+                        <li>Build mais rápido</li>
+                        <li>Request → Serve HTML cached (rápido)</li>
+                        <li>Cache reutilizado entre requests</li>
+                        <li>Banco chamado apenas para revalidar</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline de Implementação -->
+        <div class="section">
+            <h2>📋 Timeline de Implementação</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>1. Páginas Estáticas</h4>
+                    <p>Adicionado <code>export const revalidate = 3600</code> em:<br>
+                    <code>/</code>, <code>/albuns-e-discos</code>, <code>/biografia</code>, <code>/videoclipes</code></p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2. Páginas Dinâmicas</h4>
+                    <p>Adicionado <code>revalidate</code> em:<br>
+                    <code>/album/[slug]</code>, <code>/musica/[slug]</code></p>
+                </div>
+                <div class="timeline-item">
+                    <h4>3. Sitemap</h4>
+                    <p>Adicionado <code>revalidate = 3600</code> em <code>sitemap.ts</code></p>
+                </div>
+                <div class="timeline-item">
+                    <h4>4. Configuração Docker</h4>
+                    <p>Pass <code>DATABASE_URL</code> como build arg para pré-renderizar com dados</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>5. Deploy</h4>
+                    <p>Todas as páginas serão pré-renderizadas e servidas como HTML estático</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefícios -->
+        <div class="section">
+            <h2>✨ Benefícios</h2>
+            <div class="benefits">
+                <div class="benefit-card">
+                    <h3>⚡ Performance</h3>
+                    <p>HTML estático é servido instantaneamente, sem renderização no servidor</p>
+                </div>
+                <div class="benefit-card">
+                    <h3>🔄 Escalabilidade</h3>
+                    <p>Revalidação em background não bloqueia requests de usuários</p>
+                </div>
+                <div class="benefit-card">
+                    <h3>💪 Resiliência</h3>
+                    <p>Build funciona sem banco de dados</p>
+                </div>
+                <div class="benefit-card">
+                    <h3>📦 Deployment Rápido</h3>
+                    <p>Menos tempo esperando build, mais tempo produzindo</p>
+                </div>
+                <div class="benefit-card">
+                    <h3>💾 Menos Carga no BD</h3>
+                    <p>Reduz drasticamente queries durante build</p>
+                </div>
+                <div class="benefit-card">
+                    <h3>🎯 Flexibilidade</h3>
+                    <p>Novo conteúdo (admin) renderiza em runtime com fallback</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arquivos Modificados -->
+        <div class="section">
+            <h2>📝 Arquivos Modificados</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>src/app/page.tsx</h4>
+                    <p>Home page com ISG revalidate</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>src/app/albuns-e-discos/page.tsx</h4>
+                    <p>Página de discografia com ISG revalidate</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>src/app/biografia/page.tsx</h4>
+                    <p>Página de biografia com ISG revalidate</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>src/app/videoclipes/page.tsx</h4>
+                    <p>Página de videoclipes com ISG revalidate</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>src/app/album/[slug]/page.tsx</h4>
+                    <p>Páginas dinâmicas de álbuns com ISG revalidate</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>src/app/musica/[slug]/page.tsx</h4>
+                    <p>Páginas dinâmicas de músicas com ISG revalidate</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>src/app/sitemap.ts</h4>
+                    <p>Sitemap com ISG revalidate</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>AGENTS.md</h4>
+                    <p>Documentação da implementação ISG</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Docker Build Command -->
+        <div class="section">
+            <h2>🐳 Como Usar com Docker</h2>
+            <div style="background: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 8px; margin-top: 15px;">
+                <p style="margin-bottom: 10px;"><strong>Build COM acesso ao banco (Recomendado):</strong></p>
+                <code style="display: block; padding: 10px; background: rgba(0,0,0,0.7); border-radius: 4px; margin-bottom: 20px; word-break: break-all;">
+                    docker build --build-arg DATABASE_URL="postgresql://user:pass@host/db" .
+                </code>
+                
+                <p style="margin-bottom: 10px;"><strong>Build SEM acesso ao banco (ISG renderiza em runtime):</strong></p>
+                <code style="display: block; padding: 10px; background: rgba(0,0,0,0.7); border-radius: 4px;">
+                    docker build .
+                </code>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.contentLoaded();
+    </script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import { api, getChrome, unwrap } from "../../lib/api";
 import JsonLd, { abs, artist, breadcrumb, collectionPage } from "../../components/JsonLd";
 
 export const metadata: Metadata = pageMeta("/albuns-e-discos", "Discografia", "Álbuns, singles e DVDs do Amazarashi.");
+export const revalidate = 3600; // ISG: Revalidate every hour
 
 async function List() {
   "use cache";
