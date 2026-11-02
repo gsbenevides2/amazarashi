@@ -8,42 +8,48 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## ISG (Incremental Static Generation) Implementation
+## Docker Build Independence
 
 ### Summary
-This project uses ISG to pre-render all pages during Docker build without requiring database access at build time. The database is only accessed on-demand for new/dynamic slugs created in the admin panel after build.
+This project is configured to build independently of the database using `export const dynamic = "force-dynamic"`. This prevents pages from being pre-rendered during the build process, allowing Docker builds to complete without requiring DATABASE_URL.
 
 ### Configuration
-- **revalidate = 3600**: All pages revalidate every hour in production
+- **dynamic = "force-dynamic"**: Pages render on-demand at runtime
 - Pages affected:
-  - Static pages: `/`, `/albuns-e-discos`, `/biografia`, `/videoclipes`, `sitemap.ts`
-  - Dynamic pages: `/album/[slug]`, `/musica/[slug]`
+  - `src/app/page.tsx` - Home page
+  - `src/app/albuns-e-discos/page.tsx` - Discography
+  - `src/app/biografia/page.tsx` - Biography
+  - `src/app/videoclipes/page.tsx` - Video clips
+  - `src/app/sitemap.ts` - Sitemap
+  - `src/app/album/[slug]/page.tsx` - Album details
+  - `src/app/musica/[slug]/page.tsx` - Song details
 
 ### How it works
-1. During build, Next.js calls `generateStaticParams()` to pre-render all existing slugs
-2. Each page is cached with `"use cache"` for request-level deduplication
-3. After 1 hour in production, pages are regenerated in the background
-4. New slugs created in admin are rendered on-first-request (with `instant: false` blocking)
+1. Build runs `npm run build` without requiring DATABASE_URL
+2. Pages with `dynamic = "force-dynamic"` skip pre-rendering
+3. At runtime: Pages fetch data on-first-request via `"use cache"` and server components
+4. `"use cache"` deduplicates requests within the same render pass (request-level caching)
 
-### Build Independence
-With ISG, the Docker build:
-- Does NOT need the database connection to pre-render pages
-- Generates static HTML for all known slugs at build time
-- Serves pre-rendered content immediately on first request
-- Revalidates in background without blocking requests
+### Build Process
+The Docker build:
+- Does NOT require the database connection
+- Completes successfully without DATABASE_URL
+- Produces a standalone production-ready bundle
+- Pages render dynamically at runtime with `"use cache"` optimization
 
-### Cache Invalidation
-The admin panel can still invalidate pages on-demand using:
-```typescript
-revalidatePath("/", "layout")  // Invalidate all pages
-revalidatePath("/album/[slug]", "layout")  // Invalidate all album pages
-```
+### Continuous Deployment
+- GitHub Actions workflow triggers on `package.json` changes
+- Builds Docker image with version tagging (major.minor.patch)
+- Publishes to GHCR (GitHub Container Registry)
+- See `.github/workflows/release.yml` for details
 
-### Related files modified
-- `src/app/page.tsx` - Home page revalidation
-- `src/app/albuns-e-discos/page.tsx` - Discography page revalidation
-- `src/app/biografia/page.tsx` - Biography page revalidation
-- `src/app/videoclipes/page.tsx` - Video clips page revalidation
-- `src/app/sitemap.ts` - Sitemap revalidation
-- `src/app/album/[slug]/page.tsx` - Album detail pages
-- `src/app/musica/[slug]/page.tsx` - Song detail pages
+### Related files
+- `src/app/page.tsx` - Home page with force-dynamic
+- `src/app/albuns-e-discos/page.tsx` - Discography with force-dynamic
+- `src/app/biografia/page.tsx` - Biography with force-dynamic
+- `src/app/videoclipes/page.tsx` - Video clips with force-dynamic
+- `src/app/sitemap.ts` - Sitemap with force-dynamic
+- `src/app/album/[slug]/page.tsx` - Album details with force-dynamic
+- `src/app/musica/[slug]/page.tsx` - Song details with force-dynamic
+- `.github/workflows/release.yml` - CI/CD deployment workflow
+- `.github/workflows/release/docker.sh` - Docker build and publish script

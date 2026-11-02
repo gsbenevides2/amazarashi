@@ -10,7 +10,8 @@ import { underline } from "../../components/links";
 import Image from "next/image";
 
 export const metadata: Metadata = pageMeta("/biografia", "Biografia", "A história da banda japonesa Amazarashi: integrantes, linha do tempo e músicas em animes.");
-export const revalidate = 3600; // ISG: Revalidate every hour
+// Lê o banco a cada request; sem isso a página é pré-renderizada no build (sem DATABASE_URL) e fica vazia.
+export const dynamic = "force-dynamic";
 
 const d = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 const wrap = "mx-auto max-w-[calc(1320px+9.25rem)] px-6 md:px-18.5";

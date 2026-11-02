@@ -6,7 +6,8 @@ import { api, getChrome, unwrap } from "../../lib/api";
 import JsonLd, { abs, artist, breadcrumb, collectionPage } from "../../components/JsonLd";
 
 export const metadata: Metadata = pageMeta("/albuns-e-discos", "Discografia", "Álbuns, singles e DVDs do Amazarashi.");
-export const revalidate = 3600; // ISG: Revalidate every hour
+// Lê o banco a cada request; sem isso a página é pré-renderizada no build (sem DATABASE_URL) e fica vazia.
+export const dynamic = "force-dynamic";
 
 async function List() {
   "use cache";

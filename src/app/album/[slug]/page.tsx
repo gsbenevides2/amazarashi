@@ -8,11 +8,8 @@ import { pageMeta, isoDuration, clip, releaseKind } from "../../../lib/site";
 import JsonLd, { abs, artist, breadcrumb } from "../../../components/JsonLd";
 import { outlineButton, underline } from "../../../components/links";
 
-// Slug criado no admin depois do build renderiza sob demanda (bloqueante); os do build são estáticos.
-export const instant = false;
-export const revalidate = 3600; // ISG: Revalidate every hour for dynamic params
-
-export const generateStaticParams = async () => unwrap(await api.releases.get({ query: {} })).flatMap((r) => (r.slug ? [{ slug: r.slug }] : []));
+// Lê o banco a cada request; sem isso a página é pré-renderizada no build (sem DATABASE_URL) e fica vazia.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps<"/album/[slug]">): Promise<Metadata> {
   const a = await getAlbum((await params).slug);
