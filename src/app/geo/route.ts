@@ -1,4 +1,6 @@
-// País do visitante via header do Cloudflare. Só o código do país (sem IP); alimenta o contexto do RUM.
+import { geoFromHeaders } from "../../lib/geo";
+
+// Localização e IP do visitante via headers do Cloudflare; o front põe isto no contexto de todo evento do RUM.
 export async function GET(request: Request) {
-  return Response.json({ country: request.headers.get("cf-ipcountry") ?? "" }, { headers: { "cache-control": "no-store" } });
+  return Response.json(geoFromHeaders(request.headers), { headers: { "cache-control": "no-store" } });
 }

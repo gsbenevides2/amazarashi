@@ -20,13 +20,13 @@ const sessionId = () => {
   }
 };
 
-// País (header do Cloudflare, via /geo). Com timeout: sem ele o RUM sobe sem país em vez de atrasar.
-async function country(): Promise<string> {
+// IP e localização (headers do Cloudflare, via /geo). Com timeout: sem ele o RUM sobe sem geo em vez de atrasar.
+async function geo(): Promise<Record<string, string>> {
   try {
     const r = await fetch("/geo", { cache: "no-store", signal: AbortSignal.timeout(1000) });
-    return ((await r.json()) as { country?: string }).country ?? "";
+    return (await r.json()) as Record<string, string>;
   } catch {
-    return "";
+    return {};
   }
 }
 
@@ -38,8 +38,8 @@ export async function instrumentFrontend(): Promise<void> {
   const version = packageJson.version;
   // Vem do servidor em runtime (window.__CFG__), não de process.env: o build não tem env.
   const { token: clientToken, site, org: organizationIdentifier } = cfg;
-  // Resolvido ANTES do init: a view inicial já sai com origem e país.
-  const ctx = { ...acquisition(), country: await country() };
+  // Resolvido ANTES do init: a view inicial já sai com origem e localização.
+  const ctx = { ...acquisition(), ...(await geo()) };
   const shared = { clientToken, site, organizationIdentifier, service, env, version, insecureHTTP: false, apiVersion: "v1" };
 
   const provider = new WebTracerProvider({
@@ -75,7 +75,7 @@ export async function instrumentFrontend(): Promise<void> {
     sessionSampleRate: 100,
     sessionReplaySampleRate: 100,
   });
-  // Contexto em TODO evento do RUM: origem da visita e país. É o que permite cruzar origem x comportamento.
+  // Contexto em TODO evento do RUM: origem da visita, IP e localização. É o que permite cruzar origem x comportamento.
   for (const [k, v] of Object.entries(ctx)) openobserveRum.setGlobalContextProperty(k, v);
   openobserveLogs.init({ ...shared, forwardErrorsToLogs: true });
   openobserveRum.startSessionReplayRecording();

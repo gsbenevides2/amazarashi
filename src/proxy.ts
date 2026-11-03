@@ -1,18 +1,21 @@
 import { trace } from "@opentelemetry/api";
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION, validBearer, verify } from "./lib/auth";
+import { geoFromHeaders } from "./lib/geo";
 
 const BOT = /bot|crawl|spider|slurp|preview|headless|facebookexternalhit|curl|wget|python|go-http|axios|node-fetch|scrapy|okhttp|java\//i;
 
-// Origem no span do request: país (Cloudflare), IP real, referrer e humano x bot. Sem isto os traces do servidor
-// não dizem quem pediu. IP só aqui (Traefik já o registra); o RUM guarda só país.
+// Origem no span do request: IP, localização (Cloudflare), referrer e humano x bot. Sem isto os traces do servidor
+// não dizem quem pediu. O IP também vai ao RUM (contexto), por decisão do dono do site.
 function tagRequest(req: NextRequest) {
   const span = trace.getActiveSpan();
   if (!span) return;
   const ua = req.headers.get("user-agent") ?? "";
+  const { ip = "", ...geo } = geoFromHeaders(req.headers);
   span.setAttributes({
-    "cf.ipcountry": req.headers.get("cf-ipcountry") ?? "",
-    "client.address": req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "",
+    "client.address": ip,
+    ...Object.fromEntries(Object.entries(geo).map(([k, v]) => [`geo.${k}`, v])),
+    "cf.ipcountry": geo.country ?? "", // mantido: já usado em consultas e alertas
     "client.kind": !ua || BOT.test(ua) ? "bot" : "human",
     "http.referrer": req.headers.get("referer") ?? "",
   });
