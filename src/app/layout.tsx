@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Header from "../components/layout/Header";
 import Runtime from "../components/Runtime";
+import { serverClientConfig } from "../lib/clientConfig";
 import { SITE_URL } from "../lib/site";
 
 const montserrat = Montserrat({
@@ -38,6 +39,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={`${montserrat.variable} ${mplus.variable} h-full antialiased`}>
       <head>
+        {/* Config pública lida em runtime (o build não tem env): GA e RUM do browser dependem disto. */}
+        <script dangerouslySetInnerHTML={{ __html: `window.__CFG__=${JSON.stringify(serverClientConfig()).replace(/</g, "\\u003c")}` }} />
         {/* Reveal renderiza escondido no servidor; sem JS (ou crawler que não executa) nada o revelaria. */}
         <noscript>
           <style>{"[data-reveal]{opacity:1!important;transform:none!important}"}</style>
@@ -48,11 +51,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Header />
         </Runtime>
         {children}
-        {process.env.NEXT_PUBLIC_GA_ID && (
+        {serverClientConfig().ga && (
           <>
             {/* O init é minúsculo e define window.gtag cedo; só o gtag.js pesado (180 KB) espera o load da página. */}
-            <Script id="ga-init">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${process.env.NEXT_PUBLIC_GA_ID}')`}</Script>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} strategy="lazyOnload" />
+            <Script id="ga-init">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${serverClientConfig().ga}')`}</Script>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${serverClientConfig().ga}`} strategy="lazyOnload" />
           </>
         )}
       </body>

@@ -8,6 +8,8 @@ import { UserInteractionInstrumentation } from "@opentelemetry/instrumentation-u
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import { BatchSpanProcessor, StackContextManager, WebTracerProvider } from "@opentelemetry/sdk-trace-web";
 import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
+import { acquisition } from "../lib/acquisition";
+import { clientConfig } from "../lib/clientConfig";
 import packageJson from "../../package.json";
 
 const sessionId = () => {
@@ -18,14 +20,26 @@ const sessionId = () => {
   }
 };
 
-export function instrumentFrontend(): void {
+// País (header do Cloudflare, via /geo). Com timeout: sem ele o RUM sobe sem país em vez de atrasar.
+async function country(): Promise<string> {
+  try {
+    const r = await fetch("/geo", { cache: "no-store", signal: AbortSignal.timeout(1000) });
+    return ((await r.json()) as { country?: string }).country ?? "";
+  } catch {
+    return "";
+  }
+}
+
+export async function instrumentFrontend(): Promise<void> {
+  const cfg = clientConfig().rum;
+  if (!cfg) return;
   const service = "amazarashi-web";
   const env = process.env.NODE_ENV === "production" ? "production" : "development";
   const version = packageJson.version;
-  // Literais NEXT_PUBLIC_*: o Next só inlina acesso direto, não destructuring.
-  const clientToken = process.env.NEXT_PUBLIC_RUM_TOKEN!;
-  const site = process.env.NEXT_PUBLIC_RUM_SITE!;
-  const organizationIdentifier = process.env.NEXT_PUBLIC_OTEL_ORGANIZATION!;
+  // Vem do servidor em runtime (window.__CFG__), não de process.env: o build não tem env.
+  const { token: clientToken, site, org: organizationIdentifier } = cfg;
+  // Resolvido ANTES do init: a view inicial já sai com origem e país.
+  const ctx = { ...acquisition(), country: await country() };
   const shared = { clientToken, site, organizationIdentifier, service, env, version, insecureHTTP: false, apiVersion: "v1" };
 
   const provider = new WebTracerProvider({
@@ -52,7 +66,7 @@ export function instrumentFrontend(): void {
     trackLongTasks: true,
     trackUserInteractions: true,
     defaultPrivacyLevel: "mask-user-input", // /admin tem formulários
-    sessionPersistence: "memory", // reload = sessão nova
+    sessionPersistence: "local-storage", // reload/navegação mantém a sessão (sem cookie); expira por inatividade
     // O RUM é o único dono do traceparent (não adicionar FetchInstrumentation: dois injetores = dois trace ids).
     // Não é tráfego de usuário: o próprio export (/v1/traces) e estáticos saem das sessões.
     beforeSend: (event) =>
@@ -61,6 +75,8 @@ export function instrumentFrontend(): void {
     sessionSampleRate: 100,
     sessionReplaySampleRate: 100,
   });
+  // Contexto em TODO evento do RUM: origem da visita e país. É o que permite cruzar origem x comportamento.
+  for (const [k, v] of Object.entries(ctx)) openobserveRum.setGlobalContextProperty(k, v);
   openobserveLogs.init({ ...shared, forwardErrorsToLogs: true });
   openobserveRum.startSessionReplayRecording();
 

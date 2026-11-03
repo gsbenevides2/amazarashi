@@ -1,12 +1,24 @@
+import { openobserveRum } from "@openobserve/browser-rum";
+import { clientConfig } from "./clientConfig";
+
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
   }
 }
 
-// Evento do GA4 (no-op sem NEXT_PUBLIC_GA_ID). Marque como "evento-chave" no GA os que são conversão.
+// Mesmo evento nos dois destinos: GA4 (no-op sem GA) e OpenObserve RUM (vira ação `custom` ligada à sessão, view,
+// origem e replay). Marque como "evento-chave" no GA os que são conversão.
 export function track(event: string, params: Record<string, string | number | boolean> = {}) {
-  if (process.env.NEXT_PUBLIC_GA_ID) window.gtag?.("event", event, params);
+  const cfg = clientConfig();
+  if (cfg.ga) window.gtag?.("event", event, params);
+  if (cfg.rum) {
+    try {
+      openobserveRum.addAction(event, params);
+    } catch {
+      // telemetria nunca derruba a página
+    }
+  }
 }
 
 // Cliques delegados no document, sem tocar em cada componente:
