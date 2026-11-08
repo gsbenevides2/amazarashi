@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Img from "@/src/components/Img";
 import Parallax from "./Parallax";
 import type { ParallaxConfig } from "@/src/lib/parallax";
@@ -14,6 +14,20 @@ export default function CoverLightbox({ src, alt, accent, config }: Props) {
   const dialog = useRef<HTMLDialogElement | null>(null);
   const card = useRef<HTMLDivElement>(null);
   const closing = useRef(false);
+
+  // Com o modal aberto a página não rola (showModal só bloqueia cliques). A largura da barra de rolagem é compensada para o layout não pular;
+  // o efeito desfaz tudo quando `open` volta a false, isto é, depois da animação de fechamento.
+  useEffect(() => {
+    if (!open) return;
+    const html = document.documentElement, { overflow, paddingRight } = html.style;
+    const bar = window.innerWidth - html.clientWidth;
+    html.style.overflow = "hidden";
+    if (bar > 0) html.style.paddingRight = `${bar}px`;
+    return () => {
+      html.style.overflow = overflow;
+      html.style.paddingRight = paddingRight;
+    };
+  }, [open]);
 
   // Transição "FLIP": o cartão sai do retângulo da miniatura até o lugar final (e volta ao fechar); o vidro do fundo aparece junto.
   const flip = (to: "open" | "close") => {
@@ -59,7 +73,7 @@ export default function CoverLightbox({ src, alt, accent, config }: Props) {
           onCancel={(e) => { e.preventDefault(); close(); }} // Esc também anima antes de fechar
           onClick={(e) => e.target === e.currentTarget && close()}
           style={accent ? { background: `color-mix(in srgb, ${accent} 55%, transparent)` } : undefined}
-          className={`fixed inset-0 m-0 h-full max-h-none w-full max-w-none items-center justify-center p-4 backdrop-blur-xl open:flex ${accent ? "" : "bg-black/30"}`}
+          className={`fixed inset-0 m-0 h-full max-h-none w-full max-w-none items-center justify-center p-4 backdrop-blur-xl open:flex overscroll-contain ${accent ? "" : "bg-black/30"}`}
         >
           <div ref={card} style={{ transformOrigin: "0 0" }} className="relative rounded-2xl border border-white/20 bg-white/10 p-3 shadow-2xl backdrop-blur-2xl backdrop-saturate-150">
             {config ? (
