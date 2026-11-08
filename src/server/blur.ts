@@ -1,4 +1,4 @@
-import sharp from "sharp";
+import { sharp } from "./native";
 import { db } from "./db";
 import { imageBlurs } from "./db/schema";
 

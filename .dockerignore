@@ -6,3 +6,4 @@ out
 .playwright-mcp
 .claude
 scripts/video
+models

@@ -1,9 +1,10 @@
 import { revalidatePath } from "next/cache";
 import { Elysia, status } from "elysia";
 import { saveBlur } from "../../blur";
+import { parallaxStatus, startParallax } from "../../parallax";
 import { uploadImage } from "../../s3";
 import { idResponse, messageResponse } from "../../model";
-import { deleteOrphansBody, deleteOrphansResponse, idParams, listResponse, orphansResponse, recordBody, recordResponse, resourceParams, uploadBody, uploadResponse } from "./model";
+import { deleteOrphansBody, okResponse, parallaxQuery, parallaxResponse, deleteOrphansResponse, idParams, listResponse, orphansResponse, recordBody, recordResponse, resourceParams, uploadBody, uploadResponse } from "./model";
 import { Admin } from "./service";
 import { Storage } from "./storage";
 
@@ -19,12 +20,26 @@ export const admin = new Elysia({ prefix: "/admin", detail: { tags: ["Admin"] } 
   .post("/upload", async ({ body }) => {
     try {
       const url = await uploadImage(body.file);
-      await saveBlur(url, Buffer.from(await body.file.arrayBuffer())).catch(() => {}); // sem blur cai no placeholder genérico
+      const buf = Buffer.from(await body.file.arrayBuffer());
+      await saveBlur(url, buf).catch(() => {}); // sem blur cai no placeholder genérico
+      if (body.cover) await startParallax(url, buf).catch((e) => console.error("parallax", e)); // cor de destaque na hora; as camadas são geradas em segundo plano
       return { url };
     } catch (e) {
       return fail(e);
     }
-  }, { body: uploadBody, response: { 200: uploadResponse, 400: messageResponse }, detail: { summary: "Enviar imagem", description: "Envia uma imagem para o S3 e retorna a URL." } })
+  }, { body: uploadBody, response: { 200: uploadResponse, 400: messageResponse }, detail: { summary: "Enviar imagem", description: "Envia uma imagem para o S3 e retorna a URL. Com `cover`, gera também a cor de destaque e o parallax da capa." } })
+  .get("/parallax", async ({ query }) => await parallaxStatus(query.url), { query: parallaxQuery, response: parallaxResponse, detail: { summary: "Andamento do parallax", description: "Estado da geração do parallax de uma capa (none, queued, running, done, failed) e a etapa atual." } })
+  .post("/parallax", async ({ body }) => {
+    try {
+      const res = await fetch(body.url);
+      if (!res.ok) throw new Error(`não consegui baixar a capa (${res.status})`);
+      await startParallax(body.url, Buffer.from(await res.arrayBuffer()));
+      return await parallaxStatus(body.url);
+    } catch (e) {
+      return fail(e);
+    }
+  }, { body: parallaxQuery, response: { 200: parallaxResponse, 400: messageResponse }, detail: { summary: "Gerar o parallax de novo", description: "Baixa a capa já enviada e refaz o parallax (use depois de uma falha, sem subir a imagem outra vez)." } })
+  .post("/revalidate", () => { done(); return { ok: true }; }, { response: okResponse, detail: { summary: "Invalidar páginas", description: "Invalida as páginas públicas (usado quando o parallax termina de ser gerado)." } })
   .get("/storage", () => Storage.orphans(), { response: orphansResponse, detail: { summary: "Listar órfãos do S3", description: "Lista os arquivos do bucket que nenhum registro do banco referencia (ignora uploads da última hora)." } })
   .delete("/storage", async ({ body }) => {
     try {

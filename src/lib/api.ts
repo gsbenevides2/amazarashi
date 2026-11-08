@@ -1,7 +1,8 @@
 import { treaty } from "@elysia/eden";
 import { app } from "../server";
 import { db } from "../server/db";
-import { imageBlurs } from "../server/db/schema";
+import { eq } from "drizzle-orm";
+import { coverParallax, imageBlurs } from "../server/db/schema";
 
 // Server Components chamam o app direto, sem HTTP. parseDate:false: datas ISO ficam string, como nos tipos.
 export const api = treaty(app, { parseDate: false }).api;
@@ -36,4 +37,14 @@ export async function getBlurs() {
   "use cache";
   const rows = await db.select().from(imageBlurs);
   return Object.fromEntries(rows.map((r) => [r.url, r.blur]));
+}
+
+// Cor de destaque e camadas do parallax da capa (gerados no upload do admin); null = sem registro ainda ou tabela não migrada.
+export async function getParallax(url: string) {
+  "use cache";
+  try {
+    return (await db.select().from(coverParallax).where(eq(coverParallax.url, url)))[0] ?? null;
+  } catch {
+    return null;
+  }
 }
