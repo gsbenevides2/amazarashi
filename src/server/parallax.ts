@@ -72,6 +72,10 @@ export class Draft {
   elements = new Map<string, Element>();
   glows: ParallaxGlow[] = [];
   candidates: Candidate[] = []; // última rodada de find_candidates
+  // Folga do furo do fundo ao redor dos recortes (sigma do desfoque que dilata) e suavização da emenda com o original. Folga grande demais deixa um
+  // halo borrado ao redor de cada elemento quando as camadas estão em repouso; pequena demais deixa borda do elemento no fundo ("fantasma").
+  holeSigma = 3;
+  blendSigma = 2;
   scene: ParallaxScene | null = null;
   finished = false;
   onStep: (step: string) => void = () => {}; // andamento para o admin
@@ -113,6 +117,11 @@ export class Draft {
     const alpha = this.ellipseAlpha(cx, cy, rx, ry);
     await this.rejectEmpty(name, alpha);
     return this.put(name, depth, float, alpha);
+  }
+
+  // Recoloca um recorte já pronto (alfa de w×h), sem as checagens do agente. Usado para refazer o fundo a partir das camadas salvas.
+  restoreElement(name: string, depth: number, float: boolean, alpha: Buffer) {
+    this.elements.set(name, { name, depth, float, alpha });
   }
 
   private put(name: string, depth: number, float: boolean, alpha: Buffer) {
@@ -293,7 +302,7 @@ export class Draft {
 
   // Furo = união dos recortes um pouco dilatada.
   private async hole() {
-    return dilate(this.union(), this.w, this.h, 10, 8); // folga generosa: sobra de borda do elemento no fundo aparece como fantasma quando as camadas se movem
+    return dilate(this.union(), this.w, this.h, this.holeSigma, 8);
   }
 
   // Fundo sem os elementos (inpainting), RGB.
@@ -301,7 +310,7 @@ export class Draft {
     const { w, h } = this;
     if (!this.elements.size) return sharp(this.rgb, { raw: { width: w, height: h, channels: 3 } });
     const hole = await this.hole();
-    const keep = await gray(mono(hole, w, h).blur(4).negate().toColourspace("b-w"));
+    const keep = await gray(mono(hole, w, h).blur(this.blendSigma).negate().toColourspace("b-w"));
     const fill = await inpaint(this.rgb, hole, w, h);
     // materializa: quem chamar pode aplicar outro resize (sharp guarda um só, e ele trocaria o do fill antes do composite)
     return sharp(await fill.composite([{ input: await withAlpha(this.rgb, keep, w, h).png().toBuffer(), blend: "over" }]).png().toBuffer());

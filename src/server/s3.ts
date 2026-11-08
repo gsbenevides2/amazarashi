@@ -10,13 +10,13 @@ function s3() {
 export const publicUrl = (key: string) => `${process.env.S3_PUBLIC_URL!.replace(/\/+$/, "")}/${key}`;
 
 // Origem instável (ex.: 522 do Cloudflare): tenta de novo com espera crescente antes de desistir, para não perder o trabalho já feito.
-async function withRetry<T>(fn: () => Promise<T>, attempts = 3) {
+async function withRetry<T>(fn: () => Promise<T>, attempts = 4) {
   for (let i = 1; ; i++) {
     try {
       return await fn();
     } catch (e) {
       if (i >= attempts) throw e;
-      await new Promise((r) => setTimeout(r, 1000 * 3 ** (i - 1))); // 1 s, 3 s
+      await new Promise((r) => setTimeout(r, 1000 * 3 ** (i - 1))); // 1 s, 3 s, 9 s
     }
   }
 }
@@ -37,11 +37,11 @@ export async function listObjects() {
   const out: { key: string; size: number; modified: Date }[] = [];
   let token: string | undefined;
   do {
-    const r = await s3().list({ maxKeys: 1000, continuationToken: token });
+    const r = await withRetry(() => s3().list({ maxKeys: 1000, continuationToken: token }));
     for (const c of r.contents ?? []) out.push({ key: c.key, size: c.size ?? 0, modified: new Date(c.lastModified ?? 0) });
     token = r.isTruncated ? r.nextContinuationToken : undefined;
   } while (token);
   return out;
 }
 
-export const deleteObject = (key: string) => s3().delete(key);
+export const deleteObject = (key: string) => withRetry(() => s3().delete(key));
