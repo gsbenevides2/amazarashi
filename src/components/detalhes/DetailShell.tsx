@@ -4,19 +4,31 @@ import BlurScope from "@/src/components/BlurScope";
 import Footer from "../layout/Footer";
 import Image from "next/image";
 import CoverLightbox from "./CoverLightbox";
+import { getParallax } from "@/src/lib/api";
+import type { ParallaxConfig } from "@/src/lib/parallax";
 
 export type Names = { romaji: string; kana: string; en: string; pt: string };
+
+// config vem como JSON do banco; JSON inválido = sem parallax.
+const parseConfig = (j?: string | null): ParallaxConfig | undefined => {
+  try {
+    return j ? JSON.parse(j) : undefined;
+  } catch {
+    return undefined;
+  }
+};
 
 const d = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
 // Hero comum: capa desfocada ao fundo (abre do centro como o hero da home), capa nítida, título e ficha de nomes.
-export default function DetailShell({ eyebrow, names, cover, date, back, children }: { eyebrow: string; names: Names; cover: string; date: string; back: { href: string; label: string }; children: ReactNode }) {
+export default async function DetailShell({ eyebrow, names, cover, date, back, children }: { eyebrow: string; names: Names; cover: string; date: string; back: { href: string; label: string }; children: ReactNode }) {
   const rows: [string, string][] = [
     ["Hiragana", names.kana],
     ["Inglês", names.en],
     ["Português", names.pt],
     ["Lançamento", date],
   ];
+  const px = cover ? await getParallax(cover) : null;
   return (
     // --hd: sem hero de abertura, o header entra logo
     <BlurScope>
@@ -31,7 +43,7 @@ export default function DetailShell({ eyebrow, names, cover, date, back, childre
               {back.label}
             </Link>
             <div className="mt-8 grid items-end gap-8 lg:grid-cols-[minmax(0,320px)_1fr] lg:gap-14">
-              {cover ? <CoverLightbox src={cover} alt={`Capa de ${names.romaji}`} /> : <div />}
+              {cover ? <CoverLightbox src={cover} accent={px?.accent} config={parseConfig(px?.config)} alt={`Capa de ${names.romaji}`} /> : <div />}
               <div>
                 <p style={d(900)} className="hero-in font-latin text-sm uppercase text-fg/60">{eyebrow}</p>
                 <h1 style={d(1000)} className="hero-in mt-2 font-latin text-[clamp(36px,8vw,80px)] font-bold uppercase leading-none">{names.romaji}</h1>

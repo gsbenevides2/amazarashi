@@ -11,6 +11,7 @@ export const idParams = z.object({
 
 export const uploadBody = z.object({
   file: z.file().mime(["image/png", "image/jpeg", "image/webp", "image/gif", "image/avif"]).max(10 * 1024 * 1024).meta({ title: "Imagem", description: "Até 10 MB." }),
+  cover: z.string().optional().meta({ title: "É capa", description: "\"1\" para capas de lançamento: gera a cor de destaque e o parallax automático." }),
 });
 
 export const uploadResponse = z.object({ url: z.string().meta({ title: "URL", description: "URL da imagem no S3." }) }).meta({ title: "Imagem enviada", description: "URL da imagem salva no S3." });
@@ -30,3 +31,12 @@ const record = z.record(z.string().meta({ title: "Campo", description: "Nome do 
 export const recordBody = record.meta({ title: "Registro", description: "Campos conforme o spec do recurso (components/admin/specs.ts)." });
 export const recordResponse = record.meta({ title: "Registro", description: "Registro do recurso, com os campos definidos no spec." });
 export const listResponse = z.array(recordResponse).meta({ title: "Registros", description: "Todos os registros do recurso." });
+
+export const parallaxQuery = z.object({ url: z.string().meta({ title: "URL da capa", description: "URL da capa no S3." }) });
+export const parallaxResponse = z.object({
+  status: z.string().meta({ title: "Estado", description: "none, queued, running, done ou failed." }),
+  step: z.string().nullable().meta({ title: "Etapa", description: "Etapa atual ou motivo da falha." }),
+  hasLayers: z.boolean().meta({ title: "Tem camadas", description: "Se o parallax foi gerado." }),
+  active: z.boolean().meta({ title: "Em andamento", description: "Se ainda está na fila ou sendo gerado." }),
+}).meta({ title: "Andamento do parallax", description: "Estado da geração do parallax de uma capa." });
+export const okResponse = z.object({ ok: z.boolean() });

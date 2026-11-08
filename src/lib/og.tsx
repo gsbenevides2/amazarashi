@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { connection } from "next/server";
-import sharp from "sharp";
+import { sharp } from "../server/native";
 import { getChrome } from "./api";
 
 export const ogSize = { width: 1200, height: 630 };

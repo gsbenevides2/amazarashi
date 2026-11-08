@@ -42,3 +42,6 @@ next-env.d.ts
 
 # playwright mcp
 .playwright-mcp/
+
+# modelo de segmentação (baixado no build do Docker; local: veja Dockerfile)
+/models/

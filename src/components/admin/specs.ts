@@ -9,7 +9,7 @@ export type Field = {
   virtual?: boolean; // não é coluna: tratado em server/modules/admin/service.ts
   help?: string;
 };
-export type Spec = { group: string; label: string; titleField: string; fields: Field[] };
+export type Spec = { group: string; label: string; titleField: string; subtitleField?: string; fields: Field[] }; // subtitleField: coluna mostrada ao lado do título na lista
 
 const f = (name: string, label: string, type: Field["type"] = "text", extra: Partial<Field> = {}): Field => ({ name, label, type, ...extra });
 
@@ -18,6 +18,7 @@ export const specs: Record<string, Spec> = {
     group: "Catálogo",
     label: "Lançamentos",
     titleField: "title",
+    subtitleField: "romaji",
     fields: [
       f("title", "Título (japonês)", "text", { required: true }),
       f("slug", "Slug (só se tiver página de detalhe)"),

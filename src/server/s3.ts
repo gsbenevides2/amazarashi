@@ -9,10 +9,27 @@ function s3() {
 
 export const publicUrl = (key: string) => `${process.env.S3_PUBLIC_URL!.replace(/\/+$/, "")}/${key}`;
 
+// Origem instável (ex.: 522 do Cloudflare): tenta de novo com espera crescente antes de desistir, para não perder o trabalho já feito.
+async function withRetry<T>(fn: () => Promise<T>, attempts = 3) {
+  for (let i = 1; ; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (i >= attempts) throw e;
+      await new Promise((r) => setTimeout(r, 1000 * 3 ** (i - 1))); // 1 s, 3 s
+    }
+  }
+}
+
 export async function uploadImage(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
   const key = `covers/${crypto.randomUUID()}.${ext}`;
-  await s3().write(key, file, { type: file.type });
+  await withRetry(() => s3().write(key, file, { type: file.type }));
+  return publicUrl(key);
+}
+
+export async function uploadBuffer(key: string, data: Buffer, type: string) {
+  await withRetry(() => s3().write(key, data, { type }));
   return publicUrl(key);
 }
 

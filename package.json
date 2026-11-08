@@ -16,6 +16,7 @@
     "@elysia/openapi": "^1.4.16",
     "@openobserve/browser-logs": "^0.4.3",
     "@openobserve/browser-rum": "^0.4.3",
+    "@openrouter/agent": "^1.0.1",
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/api-logs": "^0.200.0",
     "@opentelemetry/core": "^2.12.0",
@@ -34,9 +35,11 @@
     "drizzle-orm": "^1.0.0-rc.4",
     "elysia": "^1.4.30",
     "next": "16.4.1",
+    "onnxruntime-node": "^1.31.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

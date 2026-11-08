@@ -167,3 +167,13 @@ export const imageBlurs = pgTable("image_blurs", {
   url: text().primaryKey(),
   blur: text().notNull(),
 });
+
+// Parallax por capa (chave = URL da capa), gerado no upload: cor de destaque do modal + config das camadas (ParallaxConfig em JSON, feito pelo agente de IA).
+// config nulo = sem parallax (sem OPENROUTER_API_KEY ou o agente não achou elementos): o modal mostra só a capa.
+export const coverParallax = pgTable("cover_parallax", {
+  url: text().primaryKey(),
+  accent: text().notNull(), // #rrggbb
+  config: text(),
+  status: text({ enum: ["queued", "running", "done", "failed"] }).notNull().default("done"), // andamento da geração (o admin consulta)
+  step: text(), // etapa atual ou motivo da falha, em texto para o admin
+});

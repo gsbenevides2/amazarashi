@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 type Row = Record<string, unknown> & { id: number };
+type Px = { status: string; step: string | null; hasLayers: boolean; active: boolean };
 
 const input = "w-full border border-line bg-card px-3 py-2 text-sm";
 const btn = "cursor-pointer border border-line px-4 py-2 text-sm hover:border-fg disabled:opacity-50";
@@ -19,6 +20,21 @@ async function call(url: string, init?: RequestInit) {
 
 const json = (method: string, body: unknown): RequestInit => ({ method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 
+function ParallaxStatus({ px, onRetry }: { px: Px; onRetry: () => void }) {
+  const text =
+    px.status === "queued" ? "Parallax: na fila…"
+    : px.status === "running" ? `Parallax: ${px.step ?? "gerando"}…`
+    : px.status === "failed" ? `Parallax falhou: ${px.step ?? "erro"}`
+    : px.hasLayers ? `Parallax pronto (${px.step})`
+    : px.step ? `Sem parallax: ${px.step}` : "Parallax desligado (só a cor de destaque)";
+  return (
+    <p role="status" aria-live="polite" className={`text-sm ${px.active ? "animate-pulse" : ""} ${px.status === "failed" ? "text-red-500" : "text-fg/70"}`}>
+      {text}
+      {px.status === "failed" && <button type="button" onClick={onRetry} className="ml-3 cursor-pointer underline">tentar de novo</button>}
+    </p>
+  );
+}
+
 export default function ResourceAdmin({ resource }: { resource: string }) {
   const spec = specs[resource];
   const [rows, setRows] = useState<Row[] | null>(null); // null = carregando
@@ -26,6 +42,32 @@ export default function ResourceAdmin({ resource }: { resource: string }) {
   const [form, setForm] = useState<Record<string, unknown> | null>(null); // id presente = edição
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  // Andamento do parallax da capa do lançamento: consulta a cada 2 s enquanto estiver na fila/gerando; ao terminar, invalida as páginas públicas.
+  const [px, setPx] = useState<Px | null>(null);
+  const [retries, setRetries] = useState(0); // reinicia a consulta depois de "tentar de novo"
+  const coverUrl = resource === "releases" && form ? String(form.coverImage ?? "") : "";
+  useEffect(() => {
+    let stop = false, timer: ReturnType<typeof setTimeout> | undefined, wasActive = false;
+    const tick = async () => {
+      try {
+        const r: Px = await call(`parallax?url=${encodeURIComponent(coverUrl)}`);
+        if (stop) return;
+        setPx(r);
+        if (r.active) {
+          wasActive = true;
+          timer = setTimeout(tick, 2000);
+        } else if (wasActive && r.status === "done") await call("revalidate", { method: "POST" });
+      } catch {
+        if (!stop) timer = setTimeout(tick, 5000);
+      }
+    };
+    if (coverUrl) tick();
+    return () => {
+      stop = true;
+      clearTimeout(timer);
+    };
+  }, [coverUrl, retries]);
 
   const refresh = async () => setRows(await call(resource));
 
@@ -63,6 +105,7 @@ export default function ResourceAdmin({ resource }: { resource: string }) {
     run(async () => {
       const fd = new FormData();
       fd.append("file", file);
+      if (resource === "releases" && name === "coverImage") fd.append("cover", "1"); // gera cor de destaque + parallax
       const { url } = await call("upload", { method: "POST", body: fd });
       setForm((p) => ({ ...p!, [name]: url }));
     });
@@ -95,6 +138,7 @@ export default function ResourceAdmin({ resource }: { resource: string }) {
             {v ? <Image src={String(v)} alt="" width={80} height={80} unoptimized className="size-20 object-cover" /> : null}
             <input id={id} type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && upload(f.name, e.target.files[0])} className="text-sm" />
             {v ? <button type="button" onClick={() => set(f.name, "")} className="text-sm underline">remover</button> : null}
+            {v && f.name === "coverImage" && resource === "releases" && px && px.status !== "none" ? <ParallaxStatus px={px} onRetry={() => run(async () => { setPx(await call("parallax", json("POST", { url: coverUrl }))); setRetries((n) => n + 1); })} /> : null}
           </div>
         );
       default:
@@ -130,7 +174,10 @@ export default function ResourceAdmin({ resource }: { resource: string }) {
           {rows?.map((r) => (
             <li key={r.id} className="flex items-center gap-4 border-b border-line py-3">
               <span className="w-10 text-sm text-fg/50">{r.id}</span>
-              <span className="flex-1">{String(r[spec.titleField])}</span>
+              <span className="flex-1">
+                {String(r[spec.titleField])}
+                {spec.subtitleField && r[spec.subtitleField] ? <span className="ml-3 text-sm text-fg/50">{String(r[spec.subtitleField])}</span> : null}
+              </span>
               {resource === "songs" && <Link href={`/admin/songs/${r.id}/letra`} className={btn}>Letra</Link>}
               <button className={btn} disabled={busy} onClick={() => edit(r.id)}>Editar</button>
               <button className={btn} disabled={busy} onClick={() => remove(r)}>Apagar</button>
