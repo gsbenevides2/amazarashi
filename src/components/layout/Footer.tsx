@@ -18,6 +18,9 @@ export default async function Footer() {
             <a href={i.href} className={link}>{i.label}</a>
           </li>
         ))}
+        <li>
+          <a href="/telemetria" className={link}>Telemetria</a>
+        </li>
       </ul>
       <div>
         <p className="mb-3 font-latin text-sm">REDES SOCIAIS</p>

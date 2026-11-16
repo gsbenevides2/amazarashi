@@ -5,6 +5,7 @@ import Home from "../../../views/home";
 import Musicas from "../../../views/albuns-e-discos";
 import Biografia from "../../../views/biografia";
 import Videoclipes from "../../../views/videoclipes";
+import Telemetria from "../../../views/telemetria";
 
 // Páginas fixas servidas como ISG: rewrites (next.config.ts) levam "/", "/biografia"... para cá.
 // O build não tem banco, então só o placeholder é gerado nele (vira 404 sem consultar nada);
@@ -14,6 +15,7 @@ const pages = {
   "albuns-e-discos": { View: Musicas, meta: () => pageMeta("/albuns-e-discos", "Discografia", "Álbuns, singles e DVDs do Amazarashi.") },
   biografia: { View: Biografia, meta: () => pageMeta("/biografia", "Biografia", "A história da banda japonesa Amazarashi: integrantes, linha do tempo e músicas em animes.") },
   videoclipes: { View: Videoclipes, meta: () => pageMeta("/videoclipes", "Vídeoclipes", "Todos os videoclipes do Amazarashi.") },
+  telemetria: { View: Telemetria, meta: () => pageMeta("/telemetria", "Telemetria", "Quais dados o Amazarashi BR coleta, para quê, onde ficam e como desativar.") },
 } as const;
 type Key = keyof typeof pages;
 const find = (k: string) => (Object.hasOwn(pages, k) ? pages[k as Key] : undefined);

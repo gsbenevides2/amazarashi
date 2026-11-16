@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Header from "../components/layout/Header";
 import Runtime from "../components/Runtime";
+import TelemetryNotice from "../components/TelemetryNotice";
 import { serverClientConfig } from "../lib/clientConfig";
 import { SITE_URL } from "../lib/site";
 
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Header />
         </Runtime>
         {children}
+        <TelemetryNotice />
         {serverClientConfig().ga && (
           <>
             {/* O init é minúsculo e define window.gtag cedo; só o gtag.js pesado (180 KB) espera o load da página. */}

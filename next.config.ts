@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
   images: { deviceSizes: [384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840], imageSizes: [32, 48, 64, 96, 128, 256], formats: ["image/avif", "image/webp"], qualities: [40, 75], minimumCacheTTL: 31536000, dangerouslyAllowLocalIP: true, remotePatterns: [{ protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/**" }, ...(s3 ? [{ protocol: s3.protocol.slice(0, -1) as "http" | "https", hostname: s3.hostname, port: s3.port, pathname: `${s3.pathname.replace(/\/+$/, "")}/**` }] : [])] },
   // Páginas fixas viram ISG: a rota real é /isg/[page] (veja app/isg). /isg/* direto é bloqueado no proxy.
   async rewrites() {
-    return { beforeFiles: [{ source: "/", destination: "/isg/home" }, ...["albuns-e-discos", "biografia", "videoclipes"].map((p) => ({ source: `/${p}`, destination: `/isg/${p}` }))], afterFiles: [], fallback: [] };
+    return { beforeFiles: [{ source: "/", destination: "/isg/home" }, ...["albuns-e-discos", "biografia", "videoclipes", "telemetria"].map((p) => ({ source: `/${p}`, destination: `/isg/${p}` }))], afterFiles: [], fallback: [] };
   },
   turbopack: {
     rules: {

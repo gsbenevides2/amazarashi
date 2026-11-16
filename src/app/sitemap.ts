@@ -24,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/albuns-e-discos", date: latest },
     { path: "/videoclipes", date: "" },
     { path: "/biografia", date: "" },
+    { path: "/telemetria", date: "" },
     ...albums.map((a) => ({ path: `/album/${a.slug}`, date: a.date })),
     ...songs.map((s) => ({ path: `/musica/${s.slug}`, date: s.date })),
   ].map(({ path, date }) => ({ url: `${SITE_URL}${path}`, lastModified: at(date) }));
