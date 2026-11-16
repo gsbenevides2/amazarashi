@@ -1,5 +1,7 @@
 # Amazarashi BR
 
+![Capa do Amazarashi BR](docs/capa.png)
+
 Fan site brasileiro (não oficial) de [amazarashi](https://www.amazarashi.com/): discografia, letras com tradução, videoclipes e biografia.
 
 ## Stack
