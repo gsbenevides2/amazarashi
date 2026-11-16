@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -36,6 +38,11 @@ export const metadata: Metadata = {
   description: "FanPage brasileira não oficial do artista Amazarashi.",
 };
 
+async function Widgets() {
+  await connection();
+  return <TelemetryNotice />;
+}
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={`${montserrat.variable} ${mplus.variable} h-full antialiased`}>
@@ -52,7 +59,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Header />
         </Runtime>
         {children}
-        <TelemetryNotice />
+        {/* Widgets globais usam usePathname (dados da URL): connection() adia para a requisição, como no Runtime. */}
+        <Suspense fallback={null}>
+          <Widgets />
+        </Suspense>
         {serverClientConfig().ga && (
           <>
             {/* O init é minúsculo e define window.gtag cedo; só o gtag.js pesado (180 KB) espera o load da página. */}
