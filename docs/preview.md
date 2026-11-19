@@ -1,5 +1,7 @@
 # Preview de PR
 
+> Primeira vez no servidor (ou depois de remover a infra)? Siga [preview-setup.md](preview-setup.md).
+
 Cada PR aberta (e não rascunho) ganha uma URL própria com a imagem buildada daquele commit:
 
 ```
