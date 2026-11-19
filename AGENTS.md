@@ -39,3 +39,10 @@ curl -sI localhost:3100/album/nao-existe | head -1                              
 - GitHub Actions workflow dispara em mudanças no `package.json`
 - Builda a imagem Docker com tag de versão (major.minor.patch) e publica no GHCR
 - Veja `.github/workflows/release.yml` e `.github/workflows/release/docker.sh`
+
+### Preview de PR
+- Toda PR ganha `https://amazarashi-pr-<n>.infra.gui.dev.br`
+- CI (`pr-preview.yml`) só builda e publica `ghcr.io/gsbenevides2/amazarashi:pr-<n>`; o servidor (atrás de NAT) puxa sozinho via cron `scripts/preview-sync.sh`, que sobe o container e o router no Traefik (file provider, `~/Docker/Projetos/traefik/proxy/dynamic`)
+- Banco em somente-leitura (papel `amazarashi_preview`): preview não escreve em PRD e o `/admin` não abre sessão
+- Ao fechar a PR, o CI apaga a tag do GHCR e o sync remove container, stack e router
+- Detalhes em `docs/preview.md`; recriar a infra do zero: `docs/preview-setup.md`
