@@ -46,7 +46,11 @@ Abra [http://localhost:3000](http://localhost:3000).
 
 ## Deploy
 
-O build consulta o banco, então `DATABASE_URL` precisa estar acessível durante ele. O `nixpacks.toml` cobre plataformas baseadas em Nixpacks; na Vercel basta importar o repositório.
+O build não precisa de banco (as páginas nascem no primeiro acesso, via ISG). O `nixpacks.toml` cobre plataformas baseadas em Nixpacks; na Vercel basta importar o repositório.
+
+## Preview de PR
+
+Toda PR aberta ganha uma URL própria, buildada daquele commit: `https://amazarashi-pr-<número>.infra.gui.dev.br`. O CI publica a imagem no GHCR e o servidor puxa sozinho (cron), com banco em modo somente-leitura. Detalhes em [docs/preview.md](docs/preview.md).
 
 ## Licença
 
