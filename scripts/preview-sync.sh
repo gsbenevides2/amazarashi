@@ -43,9 +43,20 @@ ghcr_token() {
   curl -fsS -m 20 "https://ghcr.io/token?scope=repository:${REPO_SLUG}:pull&service=ghcr.io" | jq -r '.token // empty'
 }
 
-ghcr_tags() {
-  curl -fsS -m 20 -H "Authorization: Bearer $1" "https://ghcr.io/v2/${REPO_SLUG}/tags/list" \
-    | jq -r '(.tags // [])[] | select(test("^pr-[0-9]+$"))'
+ghcr_tags() { # $1 = token; segue a paginação do registry (tags antigas empurram as pr-* para a 2ª página)
+  local auth="$1" url="https://ghcr.io/v2/${REPO_SLUG}/tags/list?n=100" hdr body next
+  hdr="$(mktemp)"
+  while :; do
+    body="$(curl -fsS -m 20 -D "${hdr}" -H "Authorization: Bearer ${auth}" "${url}")" || break
+    printf '%s' "${body}" | jq -r '(.tags // [])[] | select(test("^pr-[0-9]+$"))'
+    next="$(tr -d '\r' < "${hdr}" | sed -n 's/.*<\([^>]*\)>; *rel="next".*/\1/p' | head -1)"
+    case "${next}" in
+      http*) url="${next}" ;;
+      /*) url="https://ghcr.io${next}" ;;
+      *) break ;;
+    esac
+  done
+  rm -f "${hdr}"
 }
 
 ghcr_digest() {
@@ -140,7 +151,10 @@ deploy_preview() { # $1 = número da PR, $2 = token do GHCR
     return 0
   fi
 
+  # Só considera pronto quando imagem, container e router estão no lugar: um deploy
+  # que morreu no meio precisa ser refeito no ciclo seguinte, não ignorado.
   if [ "$(cat "${dir}/digest" 2>/dev/null || true)" = "${digest}" ] \
+    && [ -f "${TRAEFIK_DIR}/preview-amazarashi-pr-${n}.yaml" ] \
     && docker inspect -f '{{.State.Running}}' "${container}" 2>/dev/null | grep -qx true; then
     return 0
   fi

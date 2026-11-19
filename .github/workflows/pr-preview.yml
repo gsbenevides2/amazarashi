@@ -59,14 +59,21 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
-          BODY=$(cat <<EOF
+          BODY="$(cat <<EOF
           <!-- pr-preview -->
           ### Preview: ${PREVIEW_URL}
 
           \`${COMMIT_SHA:0:7}\` · [logs do build](${RUN_URL}) · o servidor puxa a imagem nova em até 2 min
           EOF
-          )
-          gh pr comment "${PR_NUMBER}" --body "${BODY}" --edit-last --create-if-none > /dev/null
+          )"
+          # Edita o comentário marcado, não "o último": o pr-agent também comenta como o mesmo bot.
+          ID="$(gh api --paginate "/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
+            --jq '.[] | select(.body | startswith("<!-- pr-preview -->")) | .id' | head -1 || true)"
+          if [ -n "${ID}" ]; then
+            gh api --method PATCH "/repos/${GITHUB_REPOSITORY}/issues/comments/${ID}" -f body="${BODY}" > /dev/null
+          else
+            gh api --method POST "/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -f body="${BODY}" > /dev/null
+          fi
 
   cleanup:
     if: github.event.action == 'closed'
