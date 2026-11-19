@@ -78,6 +78,7 @@ docker image prune -f
 
 ## Limitações
 
+- O domínio está atrás da Cloudflare: acesso automatizado (curl, bot, runner de CI) recebe o desafio `Just a moment...` (HTTP 403). No navegador a página abre normalmente.
 - Preview não roda `db:sync` nem migrations: schema e dados vêm do banco de PRD (somente leitura).
 - Dados mutáveis (admin) não são testáveis no preview — decisão proposital.
 - `NEXT_PUBLIC_*` são inlinados no build: vale o que o CI buildou (sem `.env`), não o `.env` de PRD.
